@@ -4,7 +4,7 @@
 
 [2. Ordenando e Filtrando Dados](#ordeando-e-filtrando-dados)
 
-[3. Funções de Agregação ](#aunções-de-agregação)
+[3. Funções de Agregação ](#funções-de-agregação)
 
 [4. Criando Agrupamentos no SQL](#criando-argumentos-no-sql)
 
