@@ -270,3 +270,45 @@ FROM
 WHERE
 	EmployeeCount >= 51
 ```
+
+8 - A empresa decidiu que todas as televisões de LCD receberão um super desconto no próximo mês. O seu trabalho é fazer uma consulta à tabela DimProduct e retornar os ID’s, Nomes e Preços de todos os produtos LCD existentes.
+
+```
+SELECT
+	ProductKey AS 'ID',
+	ProductName AS 'Nome',
+	UnitPrice AS 'Preço Unitário'
+FROM
+	DimProduct
+WHERE 
+	ProductName LIKE '%LCD%' 
+```
+
+9 - Faça uma lista com todos os produtos das cores: Green, Orange, Black, Silver e Pink. Estes produtos devem ser exclusivamente das marcas: 
+Contoso, Litware e Fabrikam.
+
+```
+SELECT 
+	*
+FROM
+	DimProduct
+WHERE
+	ColorName IN ('Green', 'Orange', 'Black', 'Silver', 'Pink')
+	AND BrandName IN('Contoso', 'Litware', 'Fabrikam')
+``` 
+
+10 - A empresa possui 16 produtos da marca Contoso, da cor Silver e com um Weight entre 10 e 30. Descubra quais são esses 
+produtos e ordene o resultado em ordem decrescente de acordo com o preço (UnitPrice).
+
+```
+SELECT 
+	*
+FROM
+	DimProduct
+WHERE
+	BrandName = 'Contoso'
+	AND ColorName = 'Silver'
+	AND Weight BETWEEN 10 AND 30
+ORDER BY
+	UnitPrice DESC
+```
