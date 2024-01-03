@@ -31,7 +31,7 @@
 [15. Regex - Regular Expressions](#regex-regular-expressions)
 
 
-## Funções de Agregação
+## Ordenando e Filtrando Dados
 
 ### Conceitos Básicos 
 
