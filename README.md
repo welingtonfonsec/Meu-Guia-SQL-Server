@@ -32,6 +32,95 @@
 
 
 ## Funções de Agregação
+ORDER BY:
 
+A cláusula ORDER BY é usada para ordenar o resultado de uma consulta em ordem ascendente (ASC) ou descendente (DESC) com base em uma ou mais colunas.
+Exemplo:
+
+sql
+Copy code
+SELECT column1, column2
+FROM table
+ORDER BY column1 ASC, column2 DESC;
+WHERE:
+
+A cláusula WHERE é usada para filtrar registros com base em uma condição especificada. Somente os registros que atendem à condição serão incluídos no resultado da consulta.
+Exemplo:
+
+sql
+Copy code
+SELECT column1, column2
+FROM table
+WHERE column1 > 10;
+OR:
+
+O operador OR é usado para combinar duas ou mais condições na cláusula WHERE, onde pelo menos uma das condições deve ser verdadeira para incluir o registro no resultado.
+Exemplo:
+
+sql
+Copy code
+SELECT column1, column2
+FROM table
+WHERE column1 > 10 OR column2 = 'ABC';
+AND:
+
+O operador AND é usado para combinar duas ou mais condições na cláusula WHERE, onde todas as condições devem ser verdadeiras para incluir o registro no resultado.
+Exemplo:
+
+sql
+Copy code
+SELECT column1, column2
+FROM table
+WHERE column1 > 10 AND column2 = 'ABC';
+NOT:
+
+O operador NOT é usado para negar uma condição na cláusula WHERE, ou seja, retorna registros que não atendem à condição especificada.
+Exemplo:
+
+sql
+Copy code
+SELECT column1, column2
+FROM table
+WHERE NOT column1 = 10;
+IN:
+
+O operador IN é usado para filtrar registros com base em uma lista de valores. Ele retorna registros onde uma coluna está presente em uma lista de valores.
+Exemplo:
+
+sql
+Copy code
+SELECT column1, column2
+FROM table
+WHERE column1 IN (1, 2, 3);
+LIKE:
+
+O operador LIKE é usado para realizar buscas de padrões em uma coluna. É frequentemente usado com caracteres curinga (% para qualquer sequência de caracteres, _ para um único caractere).
+Exemplo:
+
+sql
+Copy code
+SELECT column1, column2
+FROM table
+WHERE column2 LIKE 'A%';
+IS NULL / IS NOT NULL:
+
+As condições IS NULL e IS NOT NULL são usadas para verificar se um valor em uma coluna é nulo ou não nulo, respectivamente.
+Exemplo:
+
+sql
+Copy code
+SELECT column1, column2
+FROM table
+WHERE column1 IS NULL;
+BETWEEN:
+
+O operador BETWEEN é usado para filtrar registros com base em um intervalo de valores. Ele inclui os valores limite na condição.
+Exemplo:
+
+sql
+Copy code
+SELECT column1, column2
+FROM table
+WHERE column1 BETWEEN 10 AND 20;
 
 
