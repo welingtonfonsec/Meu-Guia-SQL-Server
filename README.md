@@ -29,3 +29,9 @@
 [14. Window Functions](#windows-function)
 
 [15. Regex - Regular Expressions](#regex-regular-expressions)
+
+
+## Funções de Agregação
+
+
+
