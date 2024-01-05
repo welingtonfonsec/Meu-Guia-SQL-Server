@@ -935,3 +935,344 @@ GROUP BY
 ORDER BY
 	SUM (VacationHours)
 ```
+
+## JOINs no SQL
+
+Em SQL, JOINS são utilizados para combinar linhas de duas ou mais tabelas com base em uma condição relacionada. Existem vários tipos de JOINS, cada um atendendo a diferentes cenários de relacionamento entre tabelas.
+
+#### INNER JOIN
+
+Retorna apenas as linhas que têm correspondência em ambas as tabelas.
+Exemplo:
+```
+SELECT Orders.OrderID, Customers.CustomerName
+FROM Orders
+INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID;
+```
+#### LEFT JOIN (ou LEFT OUTER JOIN)
+
+Retorna todas as linhas da tabela à esquerda e as correspondentes da tabela à direita. Se não houver correspondência, as colunas da tabela à direita conterão valores nulos.
+Exemplo:
+```
+SELECT Customers.CustomerName, Orders.OrderID
+FROM Customers
+LEFT JOIN Orders ON Customers.CustomerID = Orders.CustomerID;
+```
+#### RIGHT JOIN (ou RIGHT OUTER JOIN)
+
+Retorna todas as linhas da tabela à direita e as correspondentes da tabela à esquerda. Se não houver correspondência, as colunas da tabela à esquerda conterão valores nulos.
+Exemplo:
+```
+SELECT Customers.CustomerName, Orders.OrderID
+FROM Customers
+RIGHT JOIN Orders ON Customers.CustomerID = Orders.CustomerID;
+```
+#### FULL JOIN (ou FULL OUTER JOIN)
+
+Retorna todas as linhas quando há uma correspondência em uma das tabelas. Se não houver correspondência, as colunas sem correspondência conterão valores nulos.
+Exemplo:
+```
+SELECT Customers.CustomerName, Orders.OrderID
+FROM Customers
+FULL JOIN Orders ON Customers.CustomerID = Orders.CustomerID;
+```
+#### CROSS JOIN
+
+Retorna o produto cartesiano de ambas as tabelas, ou seja, combina cada linha da primeira tabela com todas as linhas da segunda tabela.
+Exemplo:
+```
+SELECT Customers.CustomerName, Products.ProductName
+FROM Customers
+CROSS JOIN Products;
+```
+#### SELF JOIN
+
+Quando uma tabela é combinada com ela mesma para criar relacionamentos entre diferentes linhas dentro da mesma tabela.
+Exemplo:
+```
+SELECT e1.EmployeeName AS Employee, e2.EmployeeName AS Manager
+FROM Employees e1
+INNER JOIN Employees e2 ON e1.ManagerID = e2.EmployeeID;
+```
+#### LEFT ANTI JOIN
+
+O termo "LEFT ANTI JOIN" refere-se a uma operação que retorna todas as linhas da tabela à esquerda (tabela principal) que não têm correspondência com a tabela à direita (tabela secundária). Em outras palavras, ele retorna as linhas da tabela à esquerda que não atendem à condição de junção especificada. LEFT ANTI JOIN não é uma operação padrão em SQL.
+
+Exemplo:
+Suponha que temos duas tabelas, "Clientes" e "Pedidos", e queremos encontrar clientes que não fizeram nenhum pedido.
+
+```
+SELECT Clients.ClientID, Clients.ClientName
+FROM Clients
+LEFT JOIN Orders ON Clients.ClientID = Orders.ClientID
+WHERE Orders.OrderID IS NULL;
+```
+Neste exemplo, estamos usando um "LEFT JOIN" para combinar todas as linhas da tabela "Clientes" com as linhas correspondentes da tabela "Pedidos". A condição Orders.OrderID IS NULL no WHERE filtra apenas as linhas onde não há correspondência na tabela "Pedidos", ou seja, clientes que não fizeram nenhum pedido.
+
+Esse tipo de consulta é útil quando queremos identificar registros na tabela principal que não possuem correspondência na tabela secundária.
+
+#### RIGHT ANTI JOIN
+
+A expressão "RIGHT ANTI JOIN" não é uma operação padrão em SQL, e o conceito de "anti join" geralmente é aplicado a operações que envolvem um conjunto de dados complementares (complemento).
+
+No entanto, como não existe uma sintaxe específica chamada "RIGHT ANTI JOIN", podemos simular um efeito semelhante usando outras operações de junção e condições apropriadas.
+
+Suponha que temos as tabelas "Clientes" e "Pedidos", e queremos encontrar pedidos que não têm correspondência com clientes (um cenário incomum, mas possível):
+```
+SELECT Orders.OrderID, Orders.OrderDate
+FROM Orders
+LEFT JOIN Clients ON Orders.ClientID = Clients.ClientID
+WHERE Clients.ClientID IS NULL;
+```
+
+Neste exemplo, estamos usando um "LEFT JOIN" para combinar todas as linhas da tabela "Pedidos" com as linhas correspondentes da tabela "Clientes". A condição Clients.ClientID IS NULL no WHERE filtra apenas as linhas onde não há correspondência na tabela "Clientes", ou seja, pedidos que não têm um cliente associado.
+
+Esses exemplos ajudam a entender como os diferentes tipos de JOINS podem ser aplicados em situações diversas para recuperar dados relacionados de várias tabelas em um banco de dados.
+
+### Exemplos Práticos 
+
+1 - Utilize o INNER JOIN para trazer os nomes das subcategorias dos produtos, da tabela DimProductSubcategory para a tabela DimProduct
+```
+SELECT TOP 10 * FROM DimProduct
+```
+```
+SELECT TOP 10 * FROM DimProductSubcategory
+```
+```
+SELECT
+	DimProduct.Productkey AS 'ID Produto', 
+	DimProduct.ProductName AS 'Produto', 
+	DimProduct.ProductSubcategorykey AS 'Subcategoria',
+	DimProductSubcategory.ProductSubcategoryName
+FROM 
+	DimProduct
+INNER JOIN DimProductSubcategory
+ON 	DimProduct.ProductSubcategorykey = DimProductSubcategory.ProductSubcategorykey 
+```
+
+2 - Identifique uma coluna em comum entre as tabelas DimProductSubcategory e DimProductCategory. Utilize essa coluna para complementar informações na tabela DimProductSubcategory a partir da DimProductCategory. Utilize o LEFT JOIN.
+```
+SELECT TOP 10 * FROM DimProductSubcategory
+```
+```
+SELECT TOP 10 * FROM DimProductCategory
+```
+```
+SELECT
+	DimProductSubcategory.ProductSubcategoryKey AS 'ID Subproduto', 
+	DimProductSubcategory.ProductSubcategoryName AS 'Subcategoria',
+	DimProductCategory.ProductCategoryName AS 'Categoria'
+FROM 
+	DimProductSubcategory
+LEFT JOIN DimProductCategory
+ON 	DimProductSubcategory.ProductCategoryKey = DimProductCategory.ProductCategoryKey 
+```
+3 - Para cada loja da tabela DimStore, descubra qual o Continente e o Nome do País associados (de acordo com DimGeography). Seu SELECT final deve conter apenas as seguintes colunas: StoreKey, StoreName, EmployeeCount, ContinentName e RegionCountryName. Utilize o LEFT JOIN neste exercício.
+```
+SELECT TOP 10 * FROM DimStore
+```
+```
+SELECT TOP 10 * FROM DimGeography
+```
+```
+SELECT
+	DimStore.StoreKey AS 'ID loja', 
+	DimStore.StoreName AS 'Loja', 
+	DimStore.EmployeeCount AS 'Qtd. Funcionários',
+	DimGeography.ContinentName AS 'Continente', 
+	DimGeography.RegionCountryName AS 'País'
+FROM
+	DimStore
+LEFT JOIN DimGeography
+ON 	DimStore.GeographyKey = DimGeography.GeographyKey
+```
+
+4 - Complementa a tabela DimProduct com a informação de ProductCategoryDescription. Utilize o LEFT JOIN e retorne em seu SELECT 
+ apenas as 3 colunas que considerar mais relevantes.
+ 
+```
+SELECT TOP 10 * FROM DimProduct
+```
+```
+SELECT TOP 10 * FROM DimProductCategory
+```
+```
+SELECT TOP 10 * FROM DimProductSubcategory
+
+-- MULTIPLOS JOINS - PQ A COLUNA ProductCategoryDescription NÃO ESTA RELACIONADA DIRETAMENTE COM DimProduct e DimProductCategory. 
+-- Nesse sentido, é necessário usar a tabela intermediária DimProductSubcategory que possui a ProductCategoryDescription
+```
+```
+SELECT
+	DimProduct.ProductName AS 'Produto', 
+	DimProduct.ClassName AS 'Classe do Produto',
+	DimProductCategory.ProductCategoryDescription AS 'Categoria'
+FROM
+	DimProduct
+LEFT JOIN DimProductSubcategory
+	ON DimProduct.ProductSubcategorykey = DimProductSubcategory.ProductSubcategorykey
+		LEFT JOIN DimProductCategory
+			ON DimProduct.ProductSubcategorykey = DimProductSubcategory.ProductSubcategorykey
+```
+
+5 - A tabela FactStrategyPlan resume o planejamento estratégico da empresa. Cada linha representa um montante destinado a uma determinada 
+AccountKey.
+a) Faça um SELECT das 100 primeiras linhas de FactStrategyPlan para reconhecer a tabela.
+```
+SELECT TOP 100 * FROM FactStrategyPlan
+```
+b) Faça um INNER JOIN para criar uma tabela contendo o AccountName para cada AccountKey da tabela FactStrategyPlan. O seu SELECT final deve 
+conter as colunas:
+• StrategyPlanKey
+• DateKey
+• AccountName
+• Amount 
+
+```
+SELECT TOP 100 * FROM FactStrategyPlan
+```
+```
+SELECT TOP 100 * FROM DimAccount
+```
+```
+SELECT
+	FactStrategyPlan.StrategyPlanKey,
+	FactStrategyPlan.DateKey,
+	FactStrategyPlan.Amount,
+	DimAccount.AccountName
+FROM
+	FactStrategyPlan
+INNER JOIN DimAccount
+	ON FactStrategyPlan.AccountKey = DimAccount.AccountKey
+```
+
+6. Vamos continuar analisando a tabela FactStrategyPlan. Além da coluna AccountKey que identifica o tipo de conta, há também uma outra 
+coluna chamada ScenarioKey. Essa coluna possui a numeração que identifica o tipo de cenário: Real, Orçado e Previsão.
+Faça um INNER JOIN para criar uma tabela contendo o ScenarioName para cada ScenarioKey da tabela FactStrategyPlan. 
+O seu SELECT final deve conter as colunas:
+• StrategyPlanKey
+• DateKey
+• ScenarioName
+• Amount
+
+```
+SELECT TOP 100 * FROM FactStrategyPlan
+```
+```
+SELECT TOP 100 * FROM DimScenario
+```
+```
+SELECT
+	FactStrategyPlan.StrategyPlanKey,
+	FactStrategyPlan.DateKey,
+	DimScenario.ScenarioName,
+	FactStrategyPlan.Amount
+FROM
+	FactStrategyPlan
+INNER JOIN DimScenario
+	ON FactStrategyPlan.ScenarioKey = DimScenario.ScenarioKey
+```
+
+7 - Algumas subcategorias não possuem nenhum exemplar de produto. Identifique que subcategorias são essas.
+```
+SELECT TOP 100 * FROM DimProduct
+```
+```
+SELECT TOP 100 * FROM DimProductSubcategory
+```
+```
+SELECT
+	DimProductSubcategory.ProductSubcategoryName
+FROM 
+	DimProductSubcategory
+LEFT JOIN DimProduct
+ON DimProductSubcategory.ProductSubcategorykey = DimProduct.ProductSubcategorykey
+WHERE DimProduct.Productkey IS NULL;
+```
+
+8 - Crie uma tabela que mostre a combinação entre Marca e Canal de Venda, para as marcas Contoso, Fabrikam e Litware. 
+``` 
+SELECT TOP 10 * FROM FactSales
+```
+```
+SELECT TOP 10 * FROM DimProduct
+```
+```
+SELECT TOP 10 * FROM DimChannel
+```
+```
+SELECT
+	DISTINCT DimProduct.BrandName,
+	DimChannel.ChannelName
+FROM
+	DimProduct CROSS JOIN DimChannel
+WHERE BrandName IN ('Contoso', 'Fabrikam', 'Litware')
+```
+
+9 - Neste exercício, você deverá relacionar as tabelas FactOnlineSales com DimPromotion. Identifique a coluna que as duas tabelas 
+têm em comum e utilize-a para criar esse relacionamento.
+Retorne uma tabela contendo as seguintes colunas:
+• OnlineSalesKey
+• DateKey
+• PromotionName
+• SalesAmount
+A sua consulta deve considerar apenas as linhas de vendas referentes a produtos com desconto (PromotionName <> ‘No Discount’).
+Além disso, você deverá ordenar essa tabela de acordo com a coluna DateKey, em ordem crescente.
+
+```
+SELECT TOP 10 * FROM DimPromotion
+```
+```
+SELECT TOP 10 * FROM FactOnlineSales
+```
+```
+SELECT TOP 10 * FROM DimChannel
+```
+
+```
+SELECT TOP (1000)
+	OnlineSalesKey,
+	DateKey,
+	PromotionName,
+	SalesAmount	
+FROM 
+	FactOnlineSales
+INNER JOIN DimPromotion
+	ON FactOnlineSales.PromotionKey = DimPromotion.PromotionKey
+WHERE PromotionName <> 'No Discount'
+ORDER BY DateKey ASC
+```
+
+10 - A tabela abaixo é resultado de um Join entre a tabela FactSales e as tabelas: DimChannel, DimStore e DimProduct.
+Recrie esta consulta e classifique em ordem decrescente de acordo com SalesAmount.
+
+```
+SELECT TOP 10 * FROM FactSales
+```
+```
+SELECT TOP 10 * FROM DimProduct
+```
+```
+SELECT TOP 10 * FROM DimChannel
+```
+```
+SELECT TOP 10 * FROM DimStore
+```
+```
+SELECT TOP 100
+	FactSales.SalesKey,
+	DimChannel.ChannelName,
+	DimStore.StoreName,
+	DimProduct.ProductName,
+	FactSales.SalesAmount
+FROM
+	FactSales
+INNER JOIN DimChannel
+	ON FactSales.channelKey = DimChannel.ChannelKey
+		INNER JOIN DimStore
+			ON FactSales.StoreKey = DimStore.StoreKey
+				INNER JOIN DimProduct
+					ON FactSales.ProductKey = DimProduct.ProductKey
+ORDER BY
+	FactSales.SalesAmount DESC
+```
