@@ -6,7 +6,7 @@
 
 [3. Funções de Agregação ](#funções-de-agregação)
 
-[4. Criando Agrupamentos no SQL](#criando-argrupamentos-no-sql)
+[4. Criando Agrupamentos no SQL](#criando-agrupamentos-no-sql)
 
 [5. JOINs no SQL](#joins-no-sql)
 
