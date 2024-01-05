@@ -180,9 +180,10 @@ ORDER BY
 ```
 
 4 - Você foi alocado para criar um relatório das lojas registradas atualmente na Contoso.
-a) Descubra quantas lojas a empresa tem no total. Na consulta que você deverá fazer à tabela DimStore, retorne as seguintes informações: StoreName, OpenDate, EmployeeCount
-b) Renomeeie as colunas anteriores para deixar a sua consulta mais intuitiva.
-c) Dessas lojas, descubra quantas (e quais) lojas ainda estão ativas.
+  * a) Descubra quantas lojas a empresa tem no total. Na consulta que você deverá fazer à tabela DimStore, retorne as seguintes informações: StoreName, OpenDate, EmployeeCount
+  * b) Renomeeie as colunas anteriores para deixar a sua consulta mais intuitiva.
+  * c) Dessas lojas, descubra quantas (e quais) lojas ainda estão ativas.
+
 
 ```
 SELECT 
@@ -233,13 +234,17 @@ WHERE
 
 7 - De acordo com a quantidade de funcionários, cada loja receberá uma determinada quantidade de máquinas de café. 
 As lojas serão divididas em 3 categorias:
-CATEGORIA 1: De 1 a 20 funcionários -> 1 máquina de café
-CATEGORIA 2: De 21 a 50 funcionários -> 2 máquinas de café
-CATEGORIA 3: Acima de 51 funcionários -> 3 máquinas de café
+
+  * CATEGORIA 1: De 1 a 20 funcionários -> 1 máquina de café
+  * CATEGORIA 2: De 21 a 50 funcionários -> 2 máquinas de café
+  * CATEGORIA 3: Acima de 51 funcionários -> 3 máquinas de café
+
+
+
 Identifique, para cada caso, quais são as lojas de cada uma das 3 categorias acima (basta fazer uma verificação).
 
-CATEGORIA 1: De 1 a 20 funcionários -> 1 máquina de café
 
+CATEGORIA 1: De 1 a 20 funcionários -> 1 máquina de café
 ```
 SELECT
 	*
