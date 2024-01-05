@@ -52,7 +52,6 @@ A cláusula WHERE é utilizada para filtrar registros com base em uma condição
 
 Exemplo:
 ```
-Copy code
 SELECT NomeCliente, ValorCompra
 FROM Compras
 WHERE ValorCompra > 1000;
