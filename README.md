@@ -2,11 +2,11 @@
 
 [1. Introdução ao SQL](#introdução-ao-SQL)
 
-[2. Ordenando e Filtrando Dados](#ordeando-e-filtrando-dados)
+[2. Ordenando e Filtrando Dados](#ordenando-e-filtrando-dados)
 
 [3. Funções de Agregação ](#funções-de-agregação)
 
-[4. Criando Agrupamentos no SQL](#criando-argumentos-no-sql)
+[4. Criando Agrupamentos no SQL](#criando-argrupamentos-no-sql)
 
 [5. JOINs no SQL](#joins-no-sql)
 
