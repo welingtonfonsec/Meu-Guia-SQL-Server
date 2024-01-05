@@ -33,6 +33,10 @@
 
 ## Ordenando e Filtrando Dados
 
+No SQL Server, as funções de ordenação e filtragem são essenciais para manipular dados de forma eficiente. Aqui estão algumas das principais funções relacionadas a ordenação e filtragem.
+
+### Ordenação
+
 #### ORDER BY
 
 A cláusula ORDER BY é usada para ordenar o resultado de uma consulta em ordem ascendente (ASC) ou descendente (DESC) com base em uma ou mais colunas.
@@ -45,6 +49,7 @@ FROM Produtos
 ORDER BY PrecoUnitario DESC;
 Neste exemplo, a consulta retorna o nome do produto e o preço unitário, ordenados em ordem decrescente pelo preço unitário.
 ```
+### Filtragem
 
 #### WHERE
 
