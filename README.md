@@ -10,9 +10,9 @@
 
 [5. JOINs no SQL](#joins-no-sql)
 
-[6. Group By + Joins + Aplicações](#group-by-+-joins+aplicações)
+[6. Group By com Joins](#group-by-com-joins)
 
-[7. Variáveis](#variaveis)
+[7. Variáveis](#variáveis)
 
 [8. Manipulando Strings e Datas no SQL](#manipulando-strings-e-datas-no-sql)
 
@@ -1280,3 +1280,786 @@ INNER JOIN DimChannel
 ORDER BY
 	FactSales.SalesAmount DESC
 ```
+
+## Group By com Joins
+
+Ao combinar GROUP BY com JOINS, podemos realizar operações de agregação em conjuntos de dados resultantes da junção de várias tabelas.
+
+Exemplo:
+```
+SELECT Departments.DepartmentName, COUNT(Employees.EmployeeID) as EmployeeCount
+FROM Departments
+LEFT JOIN Employees ON Departments.DepartmentID = Employees.DepartmentID
+GROUP BY Departments.DepartmentName;
+```
+Neste exemplo, estamos contando o número de funcionários por departamento, mesmo aqueles departamentos que não têm funcionários devido ao uso de LEFT JOIN.
+
+Ao utilizar Group By com Joins, podemos analisar e agregar dados de maneira mais granular, obtendo insights valiosos sobre conjuntos de dados complexos em um banco de dados relacional.
+
+### Exemplos Práticos
+
+1 - a) Faça um resumo da quantidade vendida (Sales Quantity) de acordo com o nome do canal de vendas (ChannelName). Você deve ordenar a tabela final de acordo com SalesQuantity, em ordem decrescente.
+```
+Select top 10 * From FactSales
+Select top 10 * From DimChannel
+```
+```
+SELECT 
+	DimChannel.ChannelName AS 'Canal de Venda',
+	SUM(FactSales.SalesQuantity) 'Quantidade Vendida'
+FROM	
+	FactSales
+INNER JOIN DimChannel
+	ON FactSales.channelKey = DimChannel.ChannelKey
+GROUP BY
+	DimChannel.ChannelName
+ORDER BY 
+	SUM(FactSales.SalesQuantity) DESC
+```
+
+b) Faça um agrupamento mostrando a quantidade total vendida (Sales Quantity) e quantidade total devolvida (Return Quantity) de acordo com o nome das lojas (StoreName).
+```
+Select top 10 * From FactSales
+Select top 10 * From DimStore
+```
+```
+SELECT 
+	DimStore.StoreName AS 'Canal de Venda',
+	SUM(FactSales.SalesQuantity) 'Quantidade Vendida',
+	SUM(FactSales.ReturnQuantity) 'Quantidade Devolvida'
+FROM	
+	FactSales
+INNER JOIN DimStore
+	ON FactSales.StoreKey = DimStore.StoreKey
+GROUP BY
+	DimStore.StoreName
+ORDER BY 
+	DimStore.StoreName ASC
+```
+c) Faça um resumo do valor total vendido (Sales Amount) para cada mês (CalendarMonthLabel) e ano (CalendarYear).
+```
+Select top 10 * From FactSales
+Select top 10 * From DimDate
+```
+```
+SELECT
+	DimDate.CalendarYear AS 'Ano',
+	DimDate.CalendarMonthLabel AS 'Mês',
+	SUM(FactSales.SalesAmount) 'Valor total Vendido'
+FROM	
+	FactSales
+INNER JOIN DimDate
+	ON FactSales.DateKey = DimDate.DateKey
+GROUP BY
+	DimDate.CalendarMonthLabel,
+	DimDate.CalendarYear,
+	DimDate.CalendarMonth
+ORDER BY
+	DimDate.CalendarMonth
+```
+2 - Você precisa fazer uma análise de vendas por produtos. O objetivo final é descobrir o valor total vendido (SalesAmount) por produto.
+```
+Select top 10 * From FactSales
+Select top 10 * From DimProduct
+```
+```
+SELECT 
+	DimProduct.ProductName,
+	SUM(FactSales.SalesAmount) 'Valor total Vendido'
+FROM
+	FactSales
+INNER JOIN DimProduct
+	ON FactSales.ProductKey = DimProduct.ProductKey
+GROUP BY
+	DimProduct.ProductName
+ORDER BY
+	SUM(FactSales.SalesAmount) DESC
+```
+
+a) Descubra qual é a cor de produto que mais é vendida (de acordo com SalesQuantity).
+```
+Select top 10 * From FactSales
+Select top 10 * From DimProduct
+```
+```
+SELECT
+	DimProduct.ColorName AS 'Cor',
+	SUM(FactSales.SalesQuantity) 'Quantidade Vendida'
+FROM
+	FactSales
+INNER JOIN DimProduct
+	ON FactSales.ProductKey = DimProduct.ProductKey
+GROUP BY
+	DimProduct.ColorName
+ORDER BY
+	SUM(FactSales.SalesQuantity) DESC
+```
+b) Quantas cores tiveram uma quantidade vendida acima de 3.000.000.
+```
+SELECT
+	DimProduct.ColorName AS 'Cor',
+	SUM(FactSales.SalesQuantity) 'Quantidade Vendida'
+FROM
+	FactSales
+INNER JOIN DimProduct
+	ON FactSales.ProductKey = DimProduct.ProductKey
+GROUP BY
+	DimProduct.ColorName
+HAVING 
+	SUM(FactSales.SalesQuantity) >= '3000000'
+ORDER BY
+	SUM(FactSales.SalesQuantity) DESC
+```
+
+3 - Crie um agrupamento de quantidade vendida (SalesQuantity) por categoria do produto (ProductCategoryName). 
+--Obs: Você precisará fazer mais de 1 INNER JOIN, dado que a relação entre FactSales e DimProductCategory não é direta.
+```
+Select top 10 * From FactSales
+Select top 10 * From DimProduct
+Select top 10 * From DimProductSubcategory
+Select top 10 * From DimProductCategory
+```
+```
+SELECT
+	DimProductCategory.ProductCategoryName AS 'Categoria',
+	SUM(FactSales.SalesQuantity) AS 'Quantidade Vendida'
+FROM
+	FactSales
+INNER JOIN DimProduct 
+	ON FactSales.ProductKey = DimProduct.ProductKey
+		INNER JOIN DimProductSubcategory
+			ON DimProduct.ProductSubCategoryKey = DimProductSubcategory.ProductSubCategoryKey
+				INNER JOIN DimProductCategory
+					ON DimProductSubcategory.ProductCategoryKey = DimProductCategory.ProductCategoryKey
+GROUP BY
+	DimProductCategory.ProductCategoryName
+```
+
+4 - a) Você deve fazer uma consulta à tabela FactOnlineSales e descobrir qual é o nome completo do cliente (Pessoa Física) que mais realizou compras online (de acordo com a coluna SalesQuantity).
+```
+Select top 10 * From FactOnlineSales
+Select top 10 * From DimCustomer
+```
+```
+SELECT  
+	DimCustomer.CustomerKey AS 'ID Pessoa Física',
+	DimCustomer.FirstName AS 'Nome',
+	DimCustomer.LastName AS 'Sobrenome',
+	SUM(FactOnlineSales.SalesQuantity) AS 'Quantidade Vendida'
+FROM
+	FactOnlineSales
+INNER JOIN DimCustomer
+	ON FactOnlineSales.CustomerKey = DimCustomer.CustomerKey
+WHERE DimCustomer.CustomerType = 'Person'
+GROUP BY
+	DimCustomer.CustomerKey, 
+	DimCustomer.FirstName, 
+	DimCustomer.LastName
+ORDER BY 
+	SUM(FactOnlineSales.SalesQuantity) DESC
+```
+
+b) Feito isso, faça um agrupamento de produtos e descubra quais foram os top 10 produtos mais comprados pelo cliente da letra a, considerando o nome do produto.
+```
+Select top 10 * From FactOnlineSales
+Select top 10 * From DimCustomer
+Select top 10 * From DimProduct
+```
+```
+SELECT TOP 10
+	DimCustomer.FirstName,
+	DimCustomer.LastName,
+	DimProduct.ProductName,
+	SUM(FactOnlineSales.SalesQuantity) AS 'Qtd. Vendida'
+FROM
+	FactOnlineSales
+INNER JOIN DimCustomer
+	ON FactOnlineSales.CustomerKey = DimCustomer.CustomerKey
+		INNER JOIN DimProduct
+			ON FactOnlineSales.ProductKey = DimProduct.ProductKey
+WHERE
+	DimCustomer.CustomerKey = 7665
+GROUP BY
+	DimCustomer.FirstName,
+	DimProduct.ProductName,
+	DimCustomer.LastName
+ORDER BY 
+	SUM(FactOnlineSales.SalesQuantity) DESC
+```
+
+5 - Faça um resumo mostrando o total de produtos comprados (Sales Quantity) de acordo com o sexo dos clientes.
+```
+Select top 10 * From FactOnlineSales
+Select top 10 * From DimCustomer
+```
+```
+SELECT
+	DimCustomer.Gender AS 'Gênero',
+	SUM(FactOnlineSales.SalesQuantity) AS 'Qtd. Comprada'
+FROM
+	FactOnlineSales
+INNER JOIN DimCustomer
+	ON FactOnlineSales.CustomerKey = DimCustomer.CustomerKey
+WHERE
+	DimCustomer.Gender IS NOT NULL
+GROUP BY
+	DimCustomer.Gender
+ORDER BY
+	SUM(FactOnlineSales.SalesQuantity)
+```
+
+6 - Faça uma tabela resumo mostrando a taxa de câmbio média de acordo com cada CurrencyDescription. A tabela final deve conter apenas taxas entre 10 e 100.
+```
+Select top 10 * From FACTEXCHANGERATE
+Select top 10 * From DimCurrency
+```
+```
+SELECT
+	DimCurrency.CurrencyDescription AS 'Moeda',
+	AVG(FactExchangeRate.AverageRate) AS 'Taxa de Câmbio Média'
+FROM
+	FactExchangeRate
+INNER JOIN DimCurrency
+	ON FactExchangeRate.CurrencyKey = DimCurrency.CurrencyKey
+GROUP BY
+	DimCurrency.CurrencyDescription
+HAVING 
+	AVG(FactExchangeRate.AverageRate) BETWEEN 10 AND 100
+```
+
+7 - Descubra o valor total na tabela FactStrategyPlan destinado aos cenários: Actual e Budget.
+```
+Select top 10 * From FactStrategyPlan
+Select top 10 * From DimScenario
+```
+```
+SELECT
+	DimScenario.ScenarioName AS 'Cenário',
+	SUM(FactStrategyPlan.Amount) AS 'Total'
+FROM 
+	FactStrategyPlan
+INNER JOIN DimScenario
+	ON FactStrategyPlan.ScenarioKey = DimScenario.ScenarioKey
+GROUP BY
+	DimScenario.ScenarioName
+HAVING
+	DimScenario.ScenarioName = 'Actual' OR DimScenario.ScenarioName = 'Budget'
+```
+
+8 - Faça uma tabela resumo mostrando o resultado do planejamento estratégico por ano.
+```
+Select top 10 * From FactStrategyPlan
+Select top 10 * From DimDate
+```
+```
+SELECT
+	DimDate.CalendarYear AS 'Ano',
+	SUM(FactStrategyPlan.Amount) AS 'Total'
+FROM
+	FactStrategyPlan
+INNER JOIN DimDate
+	ON FactStrategyPlan.Datekey = DimDate.Datekey
+GROUP BY
+	DimDate.CalendarYear
+```
+
+9 - Faça um agrupamento de quantidade de produtos por ProductSubcategoryName. Leve em consideração em sua análise apenas a marca Contoso e a cor Silver.
+```
+Select top 10 * From DimProduct
+Select top 10 * From DimProductSubcategory
+Select top 10 * From DimProductCategory
+```
+```
+SELECT
+	DimProductSubcategory.ProductSubcategoryName AS 'Subcategoria',
+	DimProduct.BrandName AS 'Marca',
+	DimProduct.ColorName AS 'Cor',
+	COUNT(DimProduct.BrandName) AS 'Qnt. de Produtos'
+FROM
+	DimProductSubcategory
+INNER JOIN DimProduct
+	ON DimProductSubcategory.ProductSubcategoryKey = DimProduct.ProductSubcategoryKey
+		INNER JOIN DimProductCategory
+			ON DimProductSubcategory.ProductCategoryKey = DimProductCategory.ProductCategoryKey
+WHERE
+	DimProduct.BrandName = 'Contoso' AND DimProduct.ColorName = 'Silver'
+GROUP BY 
+	DimProductSubcategory.ProductSubcategoryName,
+	DimProduct.BrandName,
+	DimProduct.ColorName
+ORDER BY
+	COUNT(DimProduct.BrandName) DESC
+```
+
+10 - Faça um agrupamento duplo de quantidade de produtos por BrandName e ProductSubcategoryName. A tabela final deverá ser ordenada de acordo com a coluna BrandName.
+```
+Select top 10 * From DimProduct
+Select top 10 * From DimProductSubcategory
+Select top 10 * From DimProductCategory
+```
+```
+SELECT
+	DimProduct.BrandName AS 'Marca',
+	DimProductSubcategory.ProductSubcategoryName AS 'Subcategoria',
+	COUNT(DimProduct.BrandName) AS 'Qnt. de Produtos'
+FROM
+	DimProductSubcategory
+INNER JOIN DimProduct
+	ON DimProductSubcategory.ProductSubcategoryKey = DimProduct.ProductSubcategoryKey
+		INNER JOIN DimProductCategory
+			ON DimProductSubcategory.ProductCategoryKey = DimProductCategory.ProductCategoryKey
+GROUP BY
+	DimProduct.BrandName, 
+	DimProductSubcategory.ProductSubcategoryName
+ORDER BY 
+	DimProduct.BrandName ASC
+```
+
+## Variáveis
+
+No SQL Server, você pode usar variáveis para armazenar valores temporários durante a execução de scripts, procedimentos armazenados ou funções. Aqui estão alguns conceitos relacionados ao uso de variáveis no SQL Server:
+
+#### Declaração de Variáveis:
+Para declarar uma variável no SQL Server, você pode usar a palavra-chave DECLARE seguida pelo nome da variável e seu tipo de dados.
+
+```
+DECLARE @NomeVariavel VARCHAR(50);
+```
+
+Você também pode atribuir um valor à variável durante a declaração:
+```
+DECLARE @Numero INT = 10;
+```
+#### Utilização de Variáveis em Consultas:
+
+Você pode utilizar variáveis em consultas para tornar o processo mais dinâmico. Aqui está um exemplo de consulta usando uma variável:
+```
+DECLARE @DepartamentoID INT;
+SET @DepartamentoID = 1;
+
+SELECT * FROM Funcionarios WHERE DepartmentID = @DepartamentoID;
+```
+#### Variáveis em Procedimentos Armazenados:
+Procedimentos armazenados no SQL Server frequentemente fazem uso de variáveis para armazenar resultados intermediários ou parâmetros.
+
+```
+CREATE PROCEDURE ExemploProcedimento
+AS
+BEGIN
+   DECLARE @Contador INT;
+   SET @Contador = 0;
+
+   -- Resto do procedimento aqui
+
+END;
+```
+#### Variáveis em Funções:
+Funções podem ter parâmetros, que são semelhantes ao conceito de variáveis.
+
+```
+CREATE FUNCTION CalcularSalarioAnual(@SalarioMensal DECIMAL)
+RETURNS DECIMAL
+AS
+BEGIN
+   DECLARE @SalarioAnual DECIMAL;
+   SET @SalarioAnual = @SalarioMensal * 12;
+   RETURN @SalarioAnual;
+END;
+```
+#### Variáveis de Tabela Temporária:
+Além de variáveis simples, o SQL Server também suporta variáveis de tabela temporária. Essas variáveis são úteis para armazenar conjuntos temporários de dados.
+
+```
+CREATE TABLE #TempClientes (
+   ClienteID INT,
+   NomeCliente VARCHAR(100)
+);
+
+INSERT INTO #TempClientes VALUES (1, 'Cliente A');
+
+SELECT * FROM #TempClientes;
+```
+Lembre-se de que variáveis declaradas com @ são limitadas ao escopo onde foram declaradas, enquanto as variáveis de tabela temporária (#) podem ser usadas em diferentes sessões ou escopos de consulta.
+
+Esses são alguns conceitos básicos relacionados ao uso de variáveis no SQL Server. A sintaxe exata e as opções podem variar dependendo da versão específica do SQL Server que você está usando.
+
+### Exemplos Práticos 
+
+1 - Declare 4 variáveis inteiras. Atribua os seguintes valores a elas:
+* valor1 = 10
+* valor2 = 5
+* valor3 = 34
+* valor4 = 7
+  
+a) Crie uma nova variável para armazenar o resultado da soma entre valor1 e valor2. Chame essa variável de soma.
+```
+DECLARE @valor1 INT
+DECLARE @valor2 INT
+DECLARE @variavelSoma INT
+
+SET @valor1 = 10
+SET @valor2 = 5
+SET @variavelSoma = @valor1 + @valor2
+
+SELECT @variavelSoma AS 'Soma'
+```
+b) Crie uma nova variável para armazenar o resultado da subtração entre valor3 e valor 4. Chame essa variável de subtracao.
+```
+DECLARE @valor3 INT
+DECLARE @valor4 INT
+DECLARE @variavelSubtração INT
+
+SET @valor3 = 34
+SET @valor4 = 7
+SET @variavelSubtração = @valor3 - @valor4
+
+SELECT @variavelSubtração AS 'Subtração'
+```
+c) Crie uma nova variável para armazenar o resultado da multiplicação entre o valor 1 e o valor4. Chame essa variável de multiplicacao.
+```
+DECLARE @valor1 INT
+DECLARE @valor4 INT
+DECLARE @variavelMultiplicação INT
+
+SET @valor1 = 10
+SET @valor4 = 7
+SET @variavelMultiplicação = @valor1 * @valor4
+
+SELECT @variavelMultiplicação AS 'Multiplicação'
+```
+d) Crie uma nova variável para armazenar o resultado da divisão do valor3 pelo valor4. Chame essa variável de divisao. Obs: O resultado deverá estar em decimal, e não em inteiro.
+```
+DECLARE @valor3 FLOAT
+DECLARE @valor4 FLOAT
+DECLARE @variavelDivisão FLOAT
+
+SET @valor3 = 34
+SET @valor4 = 7
+SET @variavelDivisão = @valor3 / @valor4
+
+SELECT @variavelDivisão AS 'Divisão'
+```
+e) Arredonde o resultado da letra d) para 2 casas decimais.
+```
+DECLARE @valor3 FLOAT
+DECLARE @valor4 FLOAT
+DECLARE @variavelDivisão FLOAT
+
+SET @valor3 = 34
+SET @valor4 = 7
+SET @variavelDivisão = @valor3 / @valor4
+
+SELECT ROUND (@variavelDivisão, 2) AS 'Divisão'
+```
+2 - Para cada declaração das variáveis abaixo, atenção em relação ao tipo de dado que deverá ser especificado.
+
+* a) Declare uma variável chamada ‘produto’ e atribua o valor de ‘Celular’.
+* b) Declare uma variável chamada ‘quantidade’ e atribua o valor de 12.
+* c) Declare uma variável chamada ‘preco’ e atribua o valor 9.99.
+* d) Declare uma variável chamada ‘faturamento’ e atribua o resultado da multiplicação entre ‘quantidade’ e ‘preco’.
+* e) Visualize o resultado dessas 4 variáveis em uma única consulta, por meio do SELECT.
+```
+DECLARE @varProduto VARCHAR(30)
+DECLARE @varQuantidade FLOAT -- São tipo FLOAT para que representem números decimais. Se fosse INT, o valor estaria errado
+DECLARE @varPreco FLOAT
+DECLARE @varFaturamento FLOAT
+
+SET @varProduto = 'Celular'
+SET @varQuantidade = 12
+SET @varPreco = 9.99
+SET @varFaturamento = @varQuantidade * @varPreco
+
+SELECT 
+	@varProduto AS 'Produto',
+	@varQuantidade AS 'Quantidade',
+	@varPreco AS 'Preço',
+	@varFaturamento AS 'Faturamento'
+```
+3 - Você é responsável por gerenciar um banco de dados onde são recebidos dados externos de usuários. Em resumo, esses dados são:
+* Nome do usuário;
+* Data de nascimento;
+* Quantidade de pets que aquele usuário possui
+
+Você precisará criar um código em SQL capaz de juntar as informações fornecidas por este usuário. Para simular estes dados, crie 3 variáveis, chamadas: nome, data_nascimento e num_pets. Você deverá armazenar os valores ‘André’, ‘10/02/1998’ e 2, respectivamente.
+
+* Dica: você precisará utilizar as funções CAST e FORMAT para chegar no resultado.
+```
+DECLARE @varNomedoUsuario VARCHAR(30)
+DECLARE @varDataDeNascimento DATETIME
+DECLARE @varQuantidadeDePets INT
+
+SET @varNomedoUsuario = 'André'
+SET @varDataDeNascimento = '10/02/1998'
+SET @varQuantidadeDePets = 2
+
+-- PRINT 'O total de lojas abertas ' + CAST(@varLojasOn AS VARCHAR(30)) -- O CAST FOI USADO PARA CONVERTER O A VARIAVEL EM TEXTO
+
+PRINT 'Meu nome é ' + @varNomedoUsuario + ', ' + 'Nasci em ' + FORMAT(@varDataDeNascimento, 'dd/MM/yyyy') + ' e tenho ' + CAST(@varQuantidadeDePets AS VARCHAR(30)) + ' pets.'
+```
+
+4 - Você acabou de ser promovido e o seu papel será realizar um controle de qualidade sobre as lojas da empresa.
+A primeira informação que é passada a você é que o ano de 2008 foi bem complicado para a empresa, pois foi quando duas das principais lojas fecharam. O seu primeiro desafio é descobrir o nome dessas lojas que fecharam no ano de 2008, para que você possa entender o motivo e mapear planos de ação para evitar que outras lojas importantes tomem o mesmo caminho.
+O seu resultado deverá estar estruturado em uma frase, com a seguinte estrutura:
+‘As lojas fechadas no ano de 2008 foram: ’ + nome_das_lojas
+```
+DECLARE @varNomeDasLojasOff VARCHAR(100)
+SET @varNomeDasLojasOff = ''
+
+SELECT @varNomeDasLojasOff = @varNomeDasLojasOff + StoreName + ', '
+FROM DimStore
+WHERE FORMAT(CloseDate, 'yyyy') = 2008
+
+PRINT 'As lojas fechadas no ano de 2008 foram: ' + @varNomeDasLojasOff
+```
+
+5 - Você precisa criar uma consulta para mostrar a lista de produtos da tabela DimProduct para uma subcategoria específica: ‘Lamps’. Utilize o conceito de variáveis para chegar neste resultado.
+```
+SELECT * FROM DimProduct
+SELECT * FROM DimProductSubcategory
+```
+```
+DECLARE @varIdSubcategoria INT
+DECLARE @varNomeSubcategoria VARCHAR(100)
+
+SET @varNomeSubcategoria = 'Lamps'
+SET @varIdSubcategoria = (SELECT ProductSubcategoryKey FROM DimProductSubcategory WHERE ProductSubcategoryName = @varNomeSubcategoria)
+
+SELECT 
+	*
+FROM 
+	DimProduct
+WHERE
+	ProductSubcategoryKey = @varIdSubcategoria
+```
+
+## Manipulando Strings e Datas no SQL
+
+#### LEN e DATALENGTH
+
+As funções LEN e DATALENGTH possuem resultados semelhantes ambos retornam a quantidade de caracteres de um determinado texto 
+
+A grande diferença entre os dois é sutil, o LEN retorna a quantidade de caracteres de um texto, porém ignora quando aparecem espaços a mais. 
+
+```
+SELECT LEN('Hello World  ') AS Comprimento; -- Foi adicionado 2 espaços no fim da frase
+-- Resultado: 11
+```
+
+Já o DATALENGTH retorna a quantidade de caracteres, incluindo espaços a mais dentro do texto
+
+```
+SELECT LEN('Hello World  ') AS Comprimento; -- Foi adicionado 2 espaços no fim da frase
+-- Resultado: 13
+```
+
+#### CONCAT
+
+No SQL Server, a função CONCAT é usada para concatenar (juntar) duas ou mais strings em uma única string. Essa função é útil quando você precisa unir partes de texto armazenadas em diferentes colunas ou valores.
+
+Conceito Básico do CONCAT:
+A sintaxe básica da função CONCAT é a seguinte:
+
+```
+CONCAT(string1, string2, ...);
+```
+
+Exemplo de Uso:
+Considere a tabela Clientes com colunas FirstName e LastName. Você pode usar CONCAT para criar uma coluna de nome completo:
+
+```
+SELECT CONCAT(FirstName, ' ', LastName) AS FullName
+FROM Clientes;
+```
+Neste exemplo, a função CONCAT combina os valores das colunas FirstName e LastName, adicionando um espaço entre eles para formar um nome completo na nova coluna chamada FullName.
+
+#### LEFT e RIGHT
+
+As funções LEFT e RIGHT são usadas no SQL Server para extrair um número específico de caracteres à esquerda ou à direita de uma string, respectivamente.
+
+##### LEFT - Extrair Caracteres à Esquerda:
+A função LEFT retorna um número especificado de caracteres à esquerda de uma string.
+
+Sintaxe:
+```
+LEFT(string_expression, length)
+```
+string_expression: A expressão de string da qual você deseja extrair caracteres.
+length: O número de caracteres a serem extraídos.
+
+Exemplo:
+
+```
+SELECT LEFT('Hello World', 5) AS Resultado;
+-- Resultado: 'Hello'
+```
+Neste exemplo, a função LEFT extrai os primeiros 5 caracteres da string 'Hello World'.
+
+##### RIGHT - Extrair Caracteres à Direita:
+A função RIGHT retorna um número especificado de caracteres à direita de uma string.
+
+Sintaxe:
+
+```
+RIGHT(string_expression, length)
+```
+string_expression: A expressão de string da qual você deseja extrair caracteres.
+length: O número de caracteres a serem extraídos.
+
+Exemplo:
+
+```
+SELECT RIGHT('Hello World', 5) AS Resultado;
+-- Resultado: 'World'
+```
+Neste exemplo, a função RIGHT extrai os últimos 5 caracteres da string 'Hello World'.
+
+Ambas as funções são úteis quando você precisa trabalhar com partes específicas de strings em suas consultas SQL. Certifique-se de ajustar o valor do parâmetro length conforme necessário para atender aos seus requisitos.
+
+#### LEFT e RIGHT
+
+A função REPLACE no SQL Server é usada para substituir todas as ocorrências de uma substring por outra substring em uma string. Isso é útil para realizar alterações específicas em dados de texto.
+
+Sintaxe:
+```
+REPLACE(string_expression, string_pattern, string_replacement)
+```
+string_expression: A expressão de string onde a substituição será realizada.
+string_pattern: A substring que será substituída.
+string_replacement: A nova substring que será usada como substituto.
+
+Exemplo:
+
+```
+SELECT REPLACE('Hello World', 'Hello', 'Hi') AS Resultado;
+-- Resultado: 'Hi World'
+```
+Neste exemplo, a função REPLACE substitui a substring 'Hello' por 'Hi' na string 'Hello World'.
+
+##### Uso em Atualizações:
+Além de ser usado em consultas, o REPLACE é frequentemente empregado em instruções UPDATE para modificar dados em uma tabela.
+
+```
+UPDATE TabelaExemplo
+SET ColunaTexto = REPLACE(ColunaTexto, 'Antigo', 'Novo')
+WHERE AlgumaCondição;
+```
+Neste caso, a instrução UPDATE usa o REPLACE para substituir todas as ocorrências da substring 'Antigo' pela substring 'Novo' na coluna ColunaTexto da tabela TabelaExemplo, apenas para as linhas que atendem à condição especificada.
+
+Essa função é valiosa para realizar modificações específicas em dados de texto, e sua versatilidade a torna útil em várias situações no SQL Server.
+
+#### TRANSLATE e STUFF
+
+No SQL Server, as funções TRANSLATE e STUFF são utilizadas para manipulação de strings.
+
+##### TRANSLATE - Substituir Caracteres:
+
+A função TRANSLATE permite substituir caracteres em uma string com base em um mapa de substituição. Esta função é útil para realizar substituições de caracteres de maneira mais complexa do que a função REPLACE.
+
+Sintaxe:
+
+```
+TRANSLATE (string_expression, target_expression, replacement_expression)
+```
+string_expression: A expressão de string que será modificada.
+target_expression: A string de caracteres que será substituída.
+replacement_expression: A string de caracteres que será usada como substituição.
+
+Exemplo:
+```
+SELECT TRANSLATE('Hello World', 'elo', '123') AS Resultado;
+-- Resultado: 'H123 W1rld'
+```
+Neste exemplo, a função TRANSLATE substitui os caracteres 'e', 'l' e 'o' por '1', '2' e '3', respectivamente.
+
+##### STUFF - Substituir Parte de uma String:
+
+A função STUFF é usada para substituir uma parte específica de uma string por outra string. É especialmente útil quando você precisa substituir uma parte específica de uma string sem modificar o restante.
+
+Sintaxe:
+
+```
+STUFF (string_expression, start, length, replace_with_expression)
+```
+string_expression: A expressão de string que será modificada.
+start: A posição de início da substituição.
+length: O número de caracteres a serem substituídos.
+replace_with_expression: A string de substituição.
+
+Exemplo:
+```
+SELECT STUFF('Hello World', 7, 5, 'Universe') AS Resultado;
+-- Resultado: 'Hello Universe'
+```
+Neste exemplo, a função STUFF substitui 5 caracteres a partir da posição 7 da string 'Hello World' pela string 'Universe'.
+
+Essas funções são úteis para manipulação avançada de strings em consultas SQL Server, proporcionando flexibilidade na substituição e modificação de partes específicas de uma string.
+
+#### UPPER e LOWER
+
+##### UPPER - Converter para Maiúsculas:
+
+A função UPPER converte todos os caracteres de uma string para maiúsculas.
+
+Sintaxe:
+```
+UPPER(string_expression)
+```
+Exemplo:
+```
+SELECT UPPER('Hello World') AS Resultado;
+-- Resultado: 'HELLO WORLD'
+```
+Neste exemplo, a função UPPER converte a string 'Hello World' para 'HELLO WORLD'.
+
+##### LOWER - Converter para Minúsculas:
+
+A função LOWER converte todos os caracteres de uma string para minúsculas.
+
+Sintaxe:
+```
+LOWER(string_expression)
+```
+Exemplo:
+```
+SELECT LOWER('Hello World') AS Resultado;
+-- Resultado: 'hello world'
+```
+Neste exemplo, a função LOWER converte a string 'Hello World' para 'hello world'.
+
+Essas funções são úteis quando você precisa realizar comparações de strings sem considerar a diferença entre maiúsculas e minúsculas ou quando deseja padronizar a apresentação do texto em suas consultas SQL Server.
+
+#### FORMAT
+
+A função FORMAT no SQL Server é usada para formatar valores de data/hora e números de acordo com um formato específico. Essa função é útil quando você deseja exibir datas, horas ou números em um formato específico em suas consultas SQL.
+
+##### Sintaxe para Datas:
+```
+FORMAT (date_expression, format)
+```
+date_expression: A expressão de data/hora que você deseja formatar.
+format: O formato desejado para a apresentação.
+Exemplo para Datas:
+```
+SELECT FORMAT(GETDATE(), 'dd/MM/yyyy') AS DataFormatada;
+-- Resultado: '03/01/2024'
+```
+Neste exemplo, a função FORMAT formata a data atual (GETDATE()) no formato 'dd/MM/yyyy'.
+
+##### Sintaxe para Números:
+```
+FORMAT (numeric_expression, format)
+```
+numeric_expression: A expressão numérica que você deseja formatar.
+format: O formato desejado para a apresentação.
+Exemplo para Números:
+```
+SELECT FORMAT(12345.6789, 'C', 'en-US') AS NumeroFormatado;
+-- Resultado: '$12,345.68'
+```
+Neste exemplo, a função FORMAT formata o número 12345.6789 como uma moeda no formato 'C' (moeda) usando a cultura 'en-US' (Inglês dos Estados Unidos).
+
+##### Observações:
+A função FORMAT é poderosa para apresentação de dados, mas pode ter impacto no desempenho, especialmente em grandes conjuntos de dados.
+O segundo parâmetro do formato é opcional, mas especificá-lo oferece maior controle sobre a formatação.
+A função FORMAT é compatível apenas com versões mais recentes do SQL Server (a partir do SQL Server 2012).
+Utilize a função FORMAT com cuidado, pois o seu uso excessivo pode afetar o desempenho em consultas que envolvem grandes conjuntos de dados. Considere também outras opções de formatação disponíveis no SQL Server, dependendo das suas necessidades específicas.
