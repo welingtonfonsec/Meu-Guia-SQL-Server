@@ -2449,10 +2449,475 @@ ORDER BY
 	DATEDIFF(DAY, OpenDate, GETDATE()) DESC
 ```
 
+## Funções Condicionais
 
+#### CASE WHEN.. ELSE
 
+A expressão CASE WHEN...ELSE no SQL Server é usada para realizar avaliações condicionais e retornar diferentes valores com base em condições específicas. Ela é uma forma flexível de implementar lógica condicional em consultas SQL.
 
+Sintaxe:
+```
+SELECT
+  column1,
+  column2,
+  CASE
+    WHEN condition1 THEN result1
+    WHEN condition2 THEN result2
+    ELSE default_result
+  END AS new_column
+FROM
+  table;
+```
+condition1, condition2, etc.: Condições que são avaliadas em ordem. Se a primeira condição for verdadeira, o resultado associado a essa condição é retornado. Se não, a próxima condição é verificada e assim por diante.
+result1, result2, etc.: Valores ou expressões que são retornados se a condição correspondente for verdadeira.
+default_result: Valor retornado se nenhuma das condições for verdadeira.
+Exemplo:
+```
+SELECT
+  ProductName,
+  UnitsInStock,
+  CASE
+    WHEN UnitsInStock > 50 THEN 'Estoque Suficiente'
+    WHEN UnitsInStock > 0 THEN 'Estoque Baixo'
+    ELSE 'Sem Estoque'
+  END AS Status
+FROM
+  Products;
+```
+Neste exemplo, a expressão CASE WHEN...ELSE é usada para determinar o status do estoque com base na quantidade de unidades em estoque. Se UnitsInStock for maior que 50, o status será 'Estoque Suficiente'. Se for maior que 0, mas não mais que 50, o status será 'Estoque Baixo'. Se nenhuma dessas condições for atendida, o status será 'Sem Estoque'.
 
+Essa construção é útil para realizar avaliações condicionais em consultas SQL e retornar resultados personalizados com base nas condições especificadas.
 
+#### CASE + AND
 
+A expressão CASE em conjunto com AND pode ser utilizada para criar condições mais complexas e retornar diferentes resultados com base em múltiplas condições.
 
+Sintaxe:
+```
+SELECT
+  column1,
+  column2,
+  CASE
+    WHEN condition1 AND condition2 THEN result1
+    WHEN condition3 AND condition4 THEN result2
+    ELSE default_result
+  END AS new_column
+FROM
+  table;
+```
+condition1, condition2, condition3, condition4, etc.: Condições que são avaliadas em conjunto usando AND.
+result1, result2, etc.: Valores ou expressões que são retornados se as condições correspondentes forem verdadeiras.
+default_result: Valor retornado se nenhuma das condições for verdadeira.
+Exemplo:
+```
+SELECT
+  ProductName,
+  UnitsInStock,
+  CASE
+    WHEN UnitsInStock > 50 AND CategoryID = 1 THEN 'Estoque Suficiente na Categoria 1'
+    WHEN UnitsInStock > 0 AND CategoryID = 2 THEN 'Estoque Baixo na Categoria 2'
+    ELSE 'Outras Condições'
+  END AS Status
+FROM
+  Products;
+```
+Neste exemplo, a expressão CASE em conjunto com AND é utilizada para determinar o status do estoque com base em duas condições: quantidade de unidades em estoque (UnitsInStock) e identificação da categoria do produto (CategoryID). Se ambas as condições de uma cláusula WHEN forem verdadeiras, o resultado associado a essa cláusula será retornado.
+
+Essa construção é útil quando você precisa considerar várias condições simultaneamente em uma expressão CASE.
+
+#### CASE + OR
+
+A expressão CASE em conjunto com OR pode ser utilizada para criar condições mais complexas e retornar diferentes resultados com base em múltiplas condições alternativas.
+
+Sintaxe:
+```
+SELECT
+  column1,
+  column2,
+  CASE
+    WHEN condition1 OR condition2 THEN result1
+    WHEN condition3 OR condition4 THEN result2
+    ELSE default_result
+  END AS new_column
+FROM
+  table;
+```
+condition1, condition2, condition3, condition4, etc.: Condições que são avaliadas em conjunto usando OR.
+result1, result2, etc.: Valores ou expressões que são retornados se as condições correspondentes forem verdadeiras.
+default_result: Valor retornado se nenhuma das condições for verdadeira.
+Exemplo:
+```
+SELECT
+  ProductName,
+  UnitsInStock,
+  CASE
+    WHEN UnitsInStock > 50 OR CategoryID = 1 THEN 'Estoque Suficiente ou na Categoria 1'
+    WHEN UnitsInStock > 0 OR CategoryID = 2 THEN 'Estoque Baixo ou na Categoria 2'
+    ELSE 'Outras Condições'
+  END AS Status
+FROM
+  Products;
+```
+Neste exemplo, a expressão CASE em conjunto com OR é utilizada para determinar o status do estoque com base em duas condições alternativas: quantidade de unidades em estoque (UnitsInStock) ou identificação da categoria do produto (CategoryID). Se uma das condições de uma cláusula WHEN for verdadeira, o resultado associado a essa cláusula será retornado.
+
+Essa construção é útil quando você precisa considerar diferentes condições alternativas em uma expressão CASE.
+
+#### CASE Aninhado
+
+A expressão CASE aninhada, ou um "CASE WHEN... THEN... ELSE... END" dentro de outro, permite criar lógica condicional mais complexa e estruturada. Cada nível de CASE é avaliado sequencialmente até que uma condição verdadeira seja encontrada.
+
+Sintaxe:
+```
+SELECT
+  column1,
+  column2,
+  CASE
+    WHEN condition1 THEN
+      CASE
+        WHEN nested_condition1 THEN result1
+        WHEN nested_condition2 THEN result2
+        ELSE nested_default_result
+      END
+    WHEN condition2 THEN
+      CASE
+        WHEN nested_condition3 THEN result3
+        WHEN nested_condition4 THEN result4
+        ELSE nested_default_result
+      END
+    ELSE default_result
+  END AS new_column
+FROM
+  table;
+```
+condition1, condition2, etc.: Condições no nível mais externo.
+result1, result2, etc.: Valores ou expressões retornados se as condições no nível mais interno forem verdadeiras.
+nested_condition1, nested_condition2, etc.: Condições no nível mais interno.
+nested_default_result: Valor retornado se nenhuma das condições no nível mais interno for verdadeira.
+default_result: Valor retornado se nenhuma das condições no nível mais externo for verdadeira.
+Exemplo:
+```
+SELECT
+  ProductName,
+  UnitsInStock,
+  CASE
+    WHEN UnitsInStock > 50 THEN
+      CASE
+        WHEN CategoryID = 1 THEN 'Estoque Suficiente na Categoria 1'
+        WHEN CategoryID = 2 THEN 'Estoque Suficiente na Categoria 2'
+        ELSE 'Outras Condições'
+      END
+    WHEN UnitsInStock > 0 THEN
+      CASE
+        WHEN CategoryID = 1 THEN 'Estoque Baixo na Categoria 1'
+        WHEN CategoryID = 2 THEN 'Estoque Baixo na Categoria 2'
+        ELSE 'Outras Condições'
+      END
+    ELSE 'Sem Estoque'
+  END AS Status
+FROM
+  Products;
+```
+Neste exemplo, a expressão CASE aninhada é usada para determinar o status do estoque com base na quantidade de unidades em estoque (UnitsInStock) e na identificação da categoria do produto (CategoryID). Se UnitsInStock for maior que 50, ela avalia a categoria. Se for maior que 0, mas não mais que 50, também avalia a categoria. Se nenhuma dessas condições for atendida, retorna 'Sem Estoque'.
+
+Essa construção é útil quando você precisa de uma lógica condicional hierárquica e estruturada em suas consultas SQL.
+
+#### CASE Aditivo
+
+Uma outra aplicação do CASE é em uma situação especial, nessa aplicação, conseguimos adicionar uma condição a uma condição anterior
+Por exemplo, queremos aplicar um desconto de 10% aos produtos da categoria "TV and Video". E além disso, caso também seja da subcategoria
+"Television", queremos aplicar mais 5% fechando em 15% de desconto.
+
+Criamos um primeiro CASE para verificar a categoria. Logo em seguida, somamos ao CASE que verifica se a subcategoria é televisão
+```
+SELECT 
+	ProductKey,
+	ProductName,
+	ProductCategoryName,
+	ProductSubCategoryName,
+	UnitPrice,
+	CASE 
+		WHEN ProductCategoryName = 'TV and Video' THEN 0.1
+		ELSE 0.0
+	END
+	+ CASE
+		WHEN ProductSubCategoryName = 'Televisions' THEN 0.05
+		ELSE 0.0
+	END
+FROM DimProduct
+INNER JOIN DimProductSubcategory
+	ON DimProduct.ProductSubcategoryKey = DimProductSubcategory.ProductSubcategoryKey
+		INNER JOIN DimProductCategory
+			ON DimProductCategory.ProductCategoryKey = DimProductCategory.ProductCategoryKey
+```
+Os produtos da categoria 'TV and Video' terão um desconto de 10%. Se além de ser da categoria 'TV and Video', o produto for da subcategoria 'Televisions', receberá mais 5%. Totalizando 15%. 
+
+### IIF: alternativa ao CASE
+
+Uma alternativa ao CASE seria a função IIF Ela é muito semelhante com a fórmula SE do Excel, pois pede exatamente 3 argumentos
+
+  * Teste Lógico
+  * Valor se verdadeiro
+  * Valor se falso
+    
+No exercício abaixo, queremos classificar um projeto de acordo com o seu nível de risco. Utilizamos para isso uma variável
+```
+-- Qual é a categoria de risco do projeto abaixo, de acordo com sua nota:
+
+-- Risco Alto: Classificação >= 5
+-- Risco Baixo: Classificação < 5
+
+DECLARE @varRisco INT
+SET @varRisco = 6
+
+SELECT 
+	IIF( 
+		@varRisco >= 5,
+		'Risco Alto',
+		'Risco Baixo')
+```
+
+### IIF Composto
+
+É possível utilizar um IIF dentro de outro IIF, criando o que chamamos de IIF composto. Com essa aplicação, tratamos vários resultados possíveis, de acordo
+com mais de um teste lógico.
+No exemplo abaixo, queremos fazer uma consulta à tabela DimProduct e retornar o responsável pelos estoques dos produtos, de acordo com o StockTypeName.
+Como temos 3 tipos de estoque e consequentemente 3 responsáveis diferentes, teremos que utilizar mais de 1 IIF para conseguir cobrir
+todas as situações possíveis
+
+```
+-- Existem  tipos de estoque: High, Mid e Low. Faça um SELECT contendo as colunas de ProductKey, ProductName, StockTypeName e Nome do
+-- Responsável pelo produto, de acordo com o tipo de estoque. A regra deverá ser a seguinte:
+-- João é responsável pelo produto tipo High;
+-- Maria é responsável pelo produto tipo Mid;
+-- Adenor é responsável pelo produto tipo Low.
+
+SELECT
+	ProductKey,
+	ProductName,
+	StockTypeName,
+	IIF(
+		StockTypeName = 'High',
+		'João',
+		IIF(
+			StockTypeName = 'Mid',
+			'Maria',
+			'Adenor')
+			) AS 'Responsável'
+FROM 
+	DimProduct
+```
+
+### ISNULL: Tratando valores nulos
+
+A função ISNULL nos permite retornar um resultado alternativo para o caso de um valor ser nulo ( Observe no exemplo abaixo a coluna CityName Diversas dessas cidades estão com o valor NULL. Podemos utilizar a função ISNULL para verificar essa coluna (no 1 º argumento) e caso o valor seja nulo, ele retornará um resultado alternativo
+```
+SELECT
+	GeographyKey,
+	ContinentName,
+	CityName,
+	ISNULL(CityName, 'Local Desconhecido')
+FROM 
+	DimGeography
+```
+
+### Exemplos Práticos 
+
+1 - O setor de vendas decidiu aplicar um desconto aos produtos de acordo com a sua classe. O percentual aplicado deverá ser de:
+
+  * Economy -> 5%
+  * Regular -> 7%
+  * Deluxe -> 9%
+
+a) Faça uma consulta à tabela DimProduct que retorne as seguintes colunas: ProductKey, ProductName, e outras duas colunas que deverão retornar o % de Desconto e UnitPrice com desconto.
+```
+SELECT * FROM DimProduct
+
+SELECT 
+	ProductKey AS 'ID Produto',
+	ProductName AS 'Nome Produto',
+	ClassName AS 'Classe',
+	UnitPrice AS 'Preço Unitário',
+	CASE	
+		WHEN ClassName = 'Economy' THEN 0.05
+		WHEN ClassName = 'Regular' THEN 0.07
+		ELSE 0.09
+	END AS 'Desconto',
+	CASE	
+		WHEN ClassName = 'Economy' THEN (1 - 0.05) * UnitPrice
+		WHEN ClassName = 'Regular' THEN (1 - 0.07) * UnitPrice
+        ELSE (1 - 0.09) * UnitPrice
+	END AS 'Preço com Desconto'
+FROM 
+    DimProduct
+```
+
+b) Faça uma adaptação no código para que os % de desconto de 5%, 7% e 9% sejam facilmente modificados (dica: utilize variáveis).
+```
+DECLARE @varDescEco FLOAT, @varDescReg FLOAT, @varDescDel FLOAT
+SET @varDescEco = 0.05
+SET @varDescReg = 0.07
+SET @varDescDel = 0.09
+	
+SELECT 
+	ProductKey AS 'ID Produto',
+	ProductName AS 'Nome Produto',
+	ClassName AS 'Classe',
+	UnitPrice AS 'Preço Unitário',
+	CASE	
+		WHEN ClassName = 'Economy' THEN 0.05
+		WHEN ClassName = 'Regular' THEN 0.07
+		ELSE 0.09
+	END AS 'Desconto',
+	CASE	
+		WHEN ClassName = 'Economy' THEN (1 - @varDescEco) * UnitPrice
+		WHEN ClassName = 'Regular' THEN (1 - @varDescReg) * UnitPrice
+        ELSE (1 - @varDescDel) * UnitPrice
+	END AS 'Preço com Desconto'
+FROM 
+    DimProduct
+```
+
+2 - Você ficou responsável pelo controle de produtos da empresa e deverá fazer uma análise da quantidade de produtos por Marca.
+A divisão das marcas em categorias deverá ser a seguinte:
+
+  * CATEGORIA A: Mais de 500 produtos
+  * CATEGORIA B: Entre 100 e 500 produtos
+  * CATEGORIA C: Menos de 100 produtos
+
+Faça uma consulta à tabela DimProduct e retorne uma tabela com um agrupamento de Total de Produtos por Marca, além da coluna de Categoria, conforme a regra acima.
+```
+SELECT
+	BrandName AS 'Marca',
+	COUNT(*) AS 'Qnt de Produtos',
+	CASE
+		WHEN COUNT(*) >= 500 THEN 'Categoria A'
+		WHEN COUNT(*) >= 100 THEN 'Categoria B'
+		ELSE 'Categoria C'
+	END AS 'Categoria'
+FROM 
+	DimProduct
+GROUP BY 
+	BrandName
+```
+
+3 - Será necessário criar uma categorização de cada loja da empresa considerando a quantidade de funcionários de cada uma. A lógica a ser seguida será a lógica abaixo:
+
+  * EmployeeCount >= 50; 'Acima de 50 funcionários'
+  * EmployeeCount >= 40; 'Entre 40 e 50 funcionários'
+  * EmployeeCount >= 30; 'Entre 30 e 40 funcionários'
+  * EmployeeCount >= 20; 'Entre 20 e 30 funcionários'
+  * EmployeeCount >= 40; 'Entre 10 e 20 funcionários'
+  * Caso contrário: 'Abaixo de 10 funcionários'
+
+Faça uma consulta à tabela DimStore que retorne as seguintes informações: StoreName, EmployeeCount e a coluna de categoria, seguindo a regra acima.
+```
+SELECT
+	StoreName AS 'Nome da Loja', 
+	EmployeeCount AS 'Qtd de Funcionários',
+	CASE 
+		WHEN EmployeeCount >= 50 THEN 'Acima de 50 funcionários'
+		WHEN EmployeeCount >= 40 THEN 'Entre 40 e 50 funcionários'
+		WHEN EmployeeCount >= 30 THEN 'Entre de 30 e 40 funcionários'
+		WHEN EmployeeCount >= 20 THEN 'Entre de 20 e 30 funcionários'
+		ELSE 'Entre de 10 e 20 funcionários'
+	END AS 'Categoria'
+FROM
+	DimStore
+GROUP BY
+	StoreName,
+	EmployeeCount
+```
+
+4 - O setor de logística deverá realizar um transporte de carga dos produtos que estão no depósito de Seattle para o depósito de Sunnyside.
+Não se tem muitas informações sobre os produtos que estão no depósito, apenas se sabe que existem 100 exemplares de cada Subcategoria. 
+Ou seja, 100 laptops, 100 câmeras digitais, 100 ventiladores, e assim vai.
+O gerente de logística definiu que os produtos serão transportados por duas rotas distintas. 
+Além disso, a divisão dos produtos em cada uma das rotas será feita de acordo com as subcategorias (ou seja, todos os produtos de uma mesma subcategoria serão transportados pela mesma rota):
+Rota 1: As subcategorias que tiverem uma soma total menor que 1000 kg deverão ser transportados pela Rota 1.
+Rota 2: As subcategorias que tiverem uma soma total maior ou igual a 1000 kg deverão ser transportados pela Rota 2.
+
+Você deverá realizar uma consulta à tabela DimProduct e fazer essa divisão das subcategorias por cada rota. Algumas dicas:
+
+Dica 1: A sua consulta deverá ter um total de 3 colunas: Nome da Subcategoria, Peso Total e Rota.
+Dica 2: Como não se sabe quais produtos existem no depósito, apenas que existem 100 exemplares de cada subcategoria, você deverá descobrir o peso médio de cada subcategoria e multiplicar essa média por 100, de forma que você descubra aproximadamente qual é o peso total dos produtos por subcategoria.
+Dica 3: Sua resposta final deverá ter um JOIN e um GROUP BY.
+```
+SELECT 
+	ProductSubCategoryName AS 'Nome da Subcategoria',
+	ROUND(AVG(Weight), 2) AS 'Peso Médio', -- Coloquei essa coluna apenas com a intenção de organização
+	ROUND(AVG(Weight) * 100, 2) AS 'Peso Total', -- Multiplica por 100 pelo motivo de existirem 100 produtos para cada categoria
+	CASE 
+		WHEN ROUND(AVG(Weight) * 100, 2) >= 1000 THEN '2'
+		ELSE '1'
+	END AS 'Rota'
+FROM DimProduct
+INNER JOIN DimProductSubcategory
+	ON DimProduct.ProductSubcategoryKey = DimProductSubcategory.ProductSubcategoryKey
+		INNER JOIN DimProductCategory
+			ON DimProductCategory.ProductCategoryKey = DimProductCategory.ProductCategoryKey
+GROUP BY
+	ProductSubCategoryName
+```
+
+5 - O setor de marketing está com algumas ideias de ações para alavancar as vendas em 2021. Uma delas consiste em realizar sorteios entre os clientes da empresa.
+Este sorteio será dividido em categorias:
+  * ‘Sorteio Mãe do Ano’: Nessa categoria vão participar todas as mulheres com filhos.
+  * ‘Sorteio Pai do Ano’: Nessa categoria vão participar todos os pais com filhos.
+  * ‘Caminhão de Prêmios’: Nessa categoria vão participar todas os demais clientes (homens e mulheres sem filhos).
+ 
+ Seu papel será realizar uma consulta à tabela DimCustomer e retornar 3 colunas:
+  * FirstName AS ‘Nome’
+  * Gender AS ‘Sexo’
+  * TotalChildren AS ‘Qtd. Filhos’
+  * EmailAdress AS ‘E-mail’
+
+Ação de Marketing: nessa coluna você deverá dividir os clientes de acordo com as categorias ‘Sorteio Mãe do Ano’, ‘Sorteio Pai do Ano’ e ‘Caminhão de Prêmios’.
+
+```
+SELECT
+	CONCAT(FirstName,' ',LastName) AS 'Nome Completo',
+	Gender AS 'Sexo',
+	TotalChildren AS 'Qtd. Filhos',
+	EmailAddress AS 'E-mail',
+	CASE
+		WHEN TotalChildren >= 1 AND Gender = 'F' THEN 'Sorteio Mãe do Ano'
+		WHEN TotalChildren >= 1 AND Gender = 'M' THEN 'Sorteio Pai do Ano'
+		ELSE 'Caminhão de Prêmios'
+	END AS 'Ação de Marketing'
+FROM 
+	DimCustomer
+```
+
+6 - Descubra qual é a loja que possui o maior tempo de atividade (em dias). Você deverá fazer essa consulta na tabela DimStore, e considerar a coluna OpenDate como referência para esse cálculo. Atenção: lembre-se que existem lojas que foram fechadas.
+
+OBSERVAÇÃO: Essa resolução é um aprimoramento do exercício do assunto anterior. Note que ele não leva em consideração as empresas que têm data de fechamento. veja abaixo: primeiro a resolução antiga e depois o aprimoramento
+```
+-- Resolução antiga. 294 linhas (Não levou em consideração as empresas que fecharam as portas)
+
+SELECT
+	StoreName AS 'Nome da Loja',
+	OpenDate AS 'Data de Abertura',
+	CloseDate AS 'Data de Fechamento',
+	DATEDIFF(DAY, OpenDate, GETDATE()) AS 'Dias em Atividade'
+FROM 
+	DimStore
+WHERE 
+	CloseDate IS NULL 
+ORDER BY 
+	DATEDIFF(DAY, OpenDate, GETDATE()) DESC
+```
+
+```
+-- Resolução aprimorada. 306 linhas (leva em conta as empresas que fecharam as portas
+
+SELECT
+	StoreName AS 'Nome da Loja',
+	OpenDate AS 'Data de Abertura',
+	CloseDate AS 'Data de Fechamento',
+	CASE
+		WHEN CloseDate IS NULL THEN DATEDIFF(DAY, OpenDate, GETDATE()) -- leva em conta apenas a data de abertura e a data de hoje
+		ELSE DATEDIFF(DAY, OpenDate, CloseDate) -- leva em conta a data de abertura e a data de fechamento
+	END 'Dias em Atividade'
+FROM 
+	DimStore
+```
