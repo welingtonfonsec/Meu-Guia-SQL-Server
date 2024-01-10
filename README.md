@@ -2063,3 +2063,396 @@ A função FORMAT é poderosa para apresentação de dados, mas pode ter impacto
 O segundo parâmetro do formato é opcional, mas especificá-lo oferece maior controle sobre a formatação.
 A função FORMAT é compatível apenas com versões mais recentes do SQL Server (a partir do SQL Server 2012).
 Utilize a função FORMAT com cuidado, pois o seu uso excessivo pode afetar o desempenho em consultas que envolvem grandes conjuntos de dados. Considere também outras opções de formatação disponíveis no SQL Server, dependendo das suas necessidades específicas.
+
+As funções CHARINDEX e SUBSTRING no SQL Server são usadas para realizar operações em strings.
+
+#### CHARINDEX - Encontrar a Posição de uma Substring em uma String:
+A função CHARINDEX é utilizada para encontrar a posição da primeira ocorrência de uma substring em uma string. A posição é retornada como um número inteiro.
+
+Sintaxe:
+```
+CHARINDEX(substring, string [, start_location])
+```
+substring: A substring que você está procurando na string.
+string: A string onde você está procurando a substring.
+start_location (opcional): A posição inicial na string onde a busca deve começar. Se não especificado, a busca começa do início da string.
+Exemplo:
+```
+SELECT CHARINDEX('world', 'Hello world') AS Posicao;
+-- Resultado: 7
+```
+Neste exemplo, a função CHARINDEX encontra a posição da substring 'world' na string 'Hello world', e o resultado é 7.
+
+#### SUBSTRING - Extrair uma Substring de uma String:
+A função SUBSTRING é usada para extrair uma parte de uma string, começando de uma posição específica e com um comprimento determinado.
+
+Sintaxe:
+```
+SUBSTRING(string, start, length)
+```
+string: A string da qual você deseja extrair a substring.
+start: A posição inicial na string de onde começar a extração.
+length: O comprimento da substring a ser extraído.
+Exemplo:
+```
+SELECT SUBSTRING('Hello world', 7, 5) AS SubstringExtraida;
+-- Resultado: 'world'
+```
+Neste exemplo, a função SUBSTRING extrai uma substring de comprimento 5 começando da posição 7 na string 'Hello world'.
+
+Essas funções são úteis para manipular e extrair informações de strings em consultas SQL Server.
+
+No SQL Server, as funções TRIM, LTRIM e RTRIM são usadas para remover espaços em branco de uma string. Vamos entender cada uma delas:
+
+#### TRIM - Remover Espaços em Branco de Ambos os Lados:
+A função TRIM é utilizada para remover espaços em branco do início e do final de uma string. Ela é especialmente útil para limpar strings que podem ter espaços extras.
+
+Sintaxe:
+```
+TRIM([ { LEADING | TRAILING | BOTH } ] ' ' FROM string)
+```
+LEADING: Remove espaços do início da string.
+TRAILING: Remove espaços do final da string.
+BOTH: Remove espaços do início e do final da string. Este é o comportamento padrão se nenhum modificador for especificado.
+Exemplo:
+```
+SELECT TRIM('   Hello world   ') AS StringLimpa;
+-- Resultado: 'Hello world'
+```
+#### LTRIM - Remover Espaços em Branco do Início:
+A função LTRIM remove espaços em branco do início de uma string.
+
+Sintaxe:
+```
+LTRIM(string)
+```
+Exemplo:
+```
+SELECT LTRIM('   Hello world   ') AS StringLimpa;
+-- Resultado: 'Hello world   '
+```
+
+#### RTRIM - Remover Espaços em Branco do Final:
+A função RTRIM remove espaços em branco do final de uma string.
+
+Sintaxe:
+```
+RTRIM(string)
+```
+Exemplo:
+```
+SELECT RTRIM('   Hello world   ') AS StringLimpa;
+-- Resultado: '   Hello world'
+```
+Essas funções são úteis para manipulação de strings, especialmente quando você precisa garantir que não há espaços extras no início ou no final de uma string. Escolha a função que atenda melhor às suas necessidades com relação à posição dos espaços que você deseja remover.
+
+#### DAY, MONTH e YEAR
+As funções DAY, MONTH e YEAR no SQL Server são usadas para extrair componentes individuais de uma data, como dia, mês e ano.
+
+##### DAY - Extrair o Dia de uma Data:
+A função DAY é usada para extrair o componente do dia de uma data.
+
+Sintaxe:
+```
+DAY(date)
+```
+date: A data da qual você deseja extrair o dia.
+Exemplo:
+```
+SELECT DAY('2024-01-03') AS Dia;
+-- Resultado: 3
+```
+
+##### MONTH - Extrair o Mês de uma Data:
+A função MONTH é usada para extrair o componente do mês de uma data.
+
+Sintaxe:
+```
+MONTH(date)
+```
+date: A data da qual você deseja extrair o mês.
+Exemplo:
+```
+SELECT MONTH('2024-01-03') AS Mes;
+-- Resultado: 1
+```
+##### YEAR - Extrair o Ano de uma Data:
+A função YEAR é usada para extrair o componente do ano de uma data.
+
+Sintaxe:
+```
+YEAR(date)
+```
+date: A data da qual você deseja extrair o ano.
+Exemplo:
+```
+SELECT YEAR('2024-01-03') AS Ano;
+-- Resultado: 2024
+```
+Essas funções são úteis ao lidar com colunas de data em consultas SQL, permitindo que você obtenha informações específicas sobre as datas armazenadas no banco de dados.
+
+#### DATEFROMPARTS
+A função DATEFROMPARTS no SQL Server é usada para criar uma data a partir de componentes específicos, como ano, mês e dia. Essa função é útil quando você tem valores separados para ano, mês e dia e deseja combiná-los para formar uma data.
+
+Sintaxe:
+```
+DATEFROMPARTS (year, month, day)
+```
+year: O componente do ano.
+month: O componente do mês.
+day: O componente do dia.
+Exemplo:
+```
+SELECT DATEFROMPARTS(2024, 1, 3) AS DataCompleta;
+-- Resultado: '2024-01-03'
+```
+Neste exemplo, a função DATEFROMPARTS combina os componentes de ano, mês e dia para criar a data '2024-01-03'.
+
+Essa função é útil em situações em que você possui os componentes da data armazenados em colunas separadas em uma tabela e precisa formar a data completa para análises ou manipulações.
+
+#### GETDATE e SYSDATETIME
+
+GETDATE() e SYSDATETIME() são funções no SQL Server que retornam a data e hora atuais do sistema no momento em que são executadas. Ambas são amplamente utilizadas para obter informações de data e hora durante consultas ou manipulações de dados.
+
+##### GETDATE():
+GETDATE() retorna a data e hora atuais em um formato padrão.
+
+Exemplo:
+```
+SELECT GETDATE() AS DataHoraAtual;
+-- Resultado: '2024-01-03 15:30:00.000'
+```
+
+##### SYSDATETIME():
+SYSDATETIME() retorna a data e hora atuais com mais precisão do que GETDATE(). Ela inclui informações de frações de segundo.
+
+Exemplo:
+```
+SELECT SYSDATETIME() AS DataHoraAtualPrecisa;
+-- Resultado: '2024-01-03 15:30:00.1234567'
+```
+Ambas as funções são úteis, mas a escolha entre elas dependerá da precisão necessária para as suas operações. Se precisar de alta precisão, SYSDATETIME() é preferível, mas se a precisão padrão for suficiente, GETDATE() é mais comumente utilizada.
+
+Lembre-se de que a saída exata pode variar dependendo do momento da execução da consulta.
+
+#### DATENAME e DATEPART
+
+As funções DATENAME e DATEPART no SQL Server são usadas para extrair partes específicas de uma data, como o nome do mês, o dia do mês, o ano, etc.
+
+##### DATENAME - Extrair o Nome de uma Parte da Data:
+A função DATENAME é utilizada para retornar uma parte específica de uma data como uma string.
+
+Sintaxe:
+```
+DATENAME(datepart, date)
+```
+datepart: A parte da data que você deseja extrair (por exemplo, 'year', 'quarter', 'month', 'day', etc.).
+date: A data da qual você deseja extrair a parte.
+Exemplo:
+```
+SELECT DATENAME(month, '2024-01-03') AS NomeMes;
+-- Resultado: 'January'
+```
+
+##### DATEPART - Extrair o Valor Numérico de uma Parte da Data:
+A função DATEPART é utilizada para retornar a parte específica de uma data como um número.
+
+Sintaxe:
+```
+DATEPART(datepart, date)
+```
+datepart: A parte da data que você deseja extrair (por exemplo, 'year', 'quarter', 'month', 'day', etc.).
+date: A data da qual você deseja extrair a parte.
+Exemplo:
+```
+SELECT DATEPART(day, '2024-01-03') AS Dia;
+-- Resultado: 3
+```
+Ambas as funções são úteis para obter informações específicas de uma data em consultas SQL. A escolha entre DATENAME e DATEPART dependerá se você deseja a informação como uma string ou como um valor numérico.
+
+#### DATEADD e DATEDIFF
+
+As funções DATEADD e DATEDIFF no SQL Server são usadas para manipular e calcular diferenças entre datas.
+
+##### DATEADD - Adicionar um Intervalo a uma Data:
+A função DATEADD é utilizada para adicionar um intervalo específico a uma data.
+
+Sintaxe:
+```
+DATEADD(datepart, number, date)
+```
+datepart: A unidade do intervalo a ser adicionada (por exemplo, 'year', 'month', 'day', 'hour', etc.).
+number: A quantidade do intervalo a ser adicionada.
+date: A data à qual o intervalo será adicionado.
+Exemplo:
+```
+SELECT DATEADD(month, 3, '2024-01-03') AS NovaData;
+-- Resultado: '2024-04-03'
+```
+Neste exemplo, DATEADD adiciona 3 meses à data '2024-01-03', resultando em '2024-04-03'.
+
+##### DATEDIFF - Calcular a Diferença Entre Duas Datas:
+A função DATEDIFF é utilizada para calcular a diferença entre duas datas em uma unidade específica.
+
+Sintaxe:
+```
+DATEDIFF(datepart, startdate, enddate)
+```
+datepart: A unidade na qual a diferença deve ser calculada (por exemplo, 'year', 'month', 'day', 'hour', etc.).
+startdate: A data de início.
+enddate: A data de término.
+Exemplo:
+```
+SELECT DATEDIFF(day, '2024-01-01', '2024-01-10') AS DiferencaDias;
+-- Resultado: 9
+```
+Neste exemplo, DATEDIFF calcula a diferença em dias entre '2024-01-01' e '2024-01-10', resultando em 9 dias.
+
+Essas funções são úteis para realizar cálculos relacionados a datas e para ajustar datas em consultas SQL.
+
+### Exemplos Práticos 
+
+1 - Quando estamos manipulando tabelas, é importante pensar em como os dados serão apresentados em um relatório. Imagine os nomes dos produtos da tabela DimProduct. Os textos são bem grandes e pode ser que mostrar os nomes completos dos produtos não seja a opção mais interessante, pois provavelmente não vão caber em um gráfico e a visualização ficará ruim.
+
+a) Seu gestor te pede para listar todos os produtos para que seja criado um gráfico para ser apresentado na reunião diária de equipe. Faça uma consulta à tabela DimProduct que retorne (1) o nome do produto e (2) a quantidade de caracteres que cada produto tem, e ordene essa tabela do produto com a maior quantidade de caracteres para a menor.
+
+```
+SELECT
+	ProductName AS 'Nome do Produto',
+	LEN (ProductName) AS 'Qtd. Caracteres'  -- Apenas conta caracteres
+FROM DimProduct
+ORDER BY 
+	LEN (ProductName) DESC
+```
+
+ou 
+```
+SELECT
+	ProductName AS 'Nome do Produto',
+	DATALENGTH (ProductName) AS 'Qtd. Caracteres'  -- Caracteres e espaços
+FROM DimProduct
+ORDER BY 
+	DATALENGTH (ProductName) DESC
+```
+
+b) Qual é a média de caracteres dos nomes dos produtos?
+```
+SELECT
+	AVG (LEN (ProductName)) AS 'Qtd Média de Caracteres'  -- Apenas conta caracteres
+FROM DimProduct
+```
+ou
+```
+SELECT
+	AVG (DATALENGTH (ProductName)) AS 'Qtd Média de Caracteres'  -- Caracteres e espaços
+FROM 
+	DimProduct
+```
+c) Analise a estrutura dos nomes dos produtos e verifique se seria possível reduzir o tamanho do nome dos produtos. (Dica: existem informações redundantes nos nomes dos produtos? Seria possível substituí-las?)
+
+É IDENTIFICADO QUE AS INFORMAÇÕES DE BrandName e ColorName são redundantes na coluna de nomes de produtos, pois ja existem colunas específicas para isso
+```
+SELECT
+	ProductName,
+	BrandName,
+	ColorName,
+	REPLACE(REPLACE(ProductName, BrandName, ''), ColorName, '')  AS 'Nome do Produto - Limpo'
+FROM 
+	DimProduct
+```
+
+d) Qual é a média de caracteres nesse novo cenário?
+```
+SELECT
+	AVG(LEN(REPLACE(REPLACE(ProductName, BrandName, ''), ColorName, ''))) AS 'Nome do Produto - Limpo'
+FROM 
+	DimProduct
+```
+
+
+2 - A coluna StyleName da tabela DimProduct possui alguns códigos identificados por números distintos, que vão de 0 até 9, como pode ser visto no exemplo abaixo.
+Porém, o setor de controle decidiu alterar a identificação do StyleName, e em vez de usar números, a ideia agora é passar a usar letras para substituir os números, conforme exemplo:
+0 -> A, 1 -> B, 2 -> C, 3 -> D, 4 -> E, 5 -> F, 6 -> G, 7 -> H, 8 -> I, 9 - J
+
+É de sua responsabilidade alterar os números por letras na coluna StyleName da tabela DimProduct. Utilize uma função que permita fazer essas substituições de forma prática e rápida.
+```
+SELECT StyleName FROM DimProduct
+```
+```
+SELECT 
+	ProductName AS 'Nome do Produto',
+	StyleName AS 'ID',
+	TRANSLATE(StyleName, '0123456789', 'ABCDEFGHIJ') AS	'Novo ID'
+FROM DimProduct
+```
+3 - O setor de TI está criando um sistema para acompanhamento individual de cada funcionário da empresa Contoso. Cada funcionário receberá um login e senha. O login de cada funcionário será o ID do e-mail, como no exemplo abaixo:
+
+Já a senha será o FirtName + o dia do ano em que o funcionário nasceu, em MAIÚSCULA. Por exemplo, o funcionário com E-mail: mark0@contoso.com e data de nascimento 15/01/1990 deverá ter a seguinte senha: Login: mark0 e Senha: MARK15
+O responsável pelo TI pediu a sua ajuda para retornar uma tabela contendo as seguintes colunas da tabela DimEmployee: Nome completo (FirstName + LastName), E-mail, ID do e-mail e Senha.
+```
+SELECT * FROM DimEmployee
+```
+```
+SELECT 
+    CONCAT(FirstName, ' ', LastName) AS 'Nome Completo',
+    EmailAddress AS 'E-mail',
+    LEFT(EmailAddress, CHARINDEX('@', EmailAddress) - 1) AS 'Login', 
+    UPPER(FirstName + DATENAME(DAYOFYEAR, BirthDate)) AS 'Senha'
+FROM 
+	DimEmployee
+```
+
+4 - A tabela DimCustomer possui o primeiro registro de vendas no ano de 2001. Como forma de reconhecer os clientes que compraram nesse ano, o setor de Marketing solicitou a você que retornasse uma tabela com todos os clientes que fizeram a sua primeira compra neste ano para que seja enviado uma encomenda com um presente para cada um.
+Para fazer esse filtro, você pode utilizar a coluna DateFirstPurchase, que contém a informação da data da primeira compra de cada cliente na tabela DimCustomer.
+Você deverá retornar as colunas de FirstName, EmailAddress, AddressLine1 e DateFirstPurchase da tabela DimCustomer, considerando apenas os clientes que fizeram a primeira compra no ano de 2001.
+```
+SELECT * FROM DimCustomer
+```
+```
+SELECT
+	FirstName AS 'Nome',
+	EmailAddress AS 'E-mail',
+	AddressLine1 AS	'Endereço',
+	DateFirstPurchase AS 'Data Primeira Compra'
+FROM 
+	DimCustomer
+Where
+	DATENAME(YEAR, DateFirstPurchase) = 2001
+```
+
+5 - A tabela DimEmployee possui uma informação de data de contratação (HireDate). A área de RH, no entanto, precisa das informações dessas datas de forma separada em dia, mês e ano, pois será feita uma automatização para criação de um relatório de RH, e facilitaria muito se essas informações estivessem separadas em uma tabela.
+Você deverá realizar uma consulta à tabela DimEmployee e retornar uma tabela contendo as seguintes informações: FirstName, EmailAddress, HireDate, além das colunas de Dia, Mês e Ano de contratação. Obs1: A coluna de Mês deve conter o nome do mês por extenso, e não o número do mês. Obs2: Lembre-se de nomear cada uma dessas colunas em sua consulta para garantir que o entendimento de cada informação ficará 100% claro.
+
+```
+SELECT
+	FirstName AS 'Nome',
+	EmailAddress AS 'E-mail',
+	DAY(HireDate) AS 'Dia',
+	FORMAT(CAST(HireDate AS DATETIME), 'MMMM') AS 'Mês',
+	YEAR (HireDate) AS 'Ano'
+FROM 
+	DimEmployee
+```
+
+6 - Descubra qual é a loja que possui o maior tempo de atividade (em dias). Você deverá fazer essa consulta na tabela DimStore, e considerar a coluna OpenDate como referência para esse cálculo. Considerando apenas as lojas que ainda estão funcionando.
+```
+SELECT
+	StoreName AS 'Nome da Loja',
+	OpenDate AS 'Data de Abertura',
+	CloseDate AS 'Data de Fechamento',
+	DATEDIFF(DAY, OpenDate, GETDATE()) AS 'Dias em Atividade'
+FROM 
+	DimStore
+WHERE 
+	CloseDate IS NULL 
+ORDER BY 
+	DATEDIFF(DAY, OpenDate, GETDATE()) DESC
+```
+
+
+
+
+
+
+
+
