@@ -3216,3 +3216,312 @@ c) Exclua a View vw_6a.
 ```
 DROP VIEW vw_6a 
 ```
+
+## CRUD
+
+### O que é CRUD?
+
+CRUD é um acrônimo que representa as quatro principais operações em sistemas de gerenciamento de banco de dados (SGBDs) ou em aplicações que interagem com dados armazenados. As operações CRUD são:
+
+Create **(C)** - Criar: Envolve a criação de novos registros ou entradas no banco de dados.
+
+Read **(R)** - Ler: Refere-se à operação de ler, recuperar ou consultar dados existentes no banco de dados.
+
+Update **(U)** - Atualizar: Envolve a modificação ou atualização de registros existentes no banco de dados.
+
+Delete **(D)** - Excluir: Refere-se à remoção ou exclusão de registros do banco de dados.
+
+Essas operações são fundamentais para a gestão de dados em sistemas de informação. Por meio do CRUD, é possível realizar todas as principais interações com um banco de dados, desde a inserção de novos dados até a sua consulta, atualização e exclusão. O CRUD é comumente utilizado em desenvolvimento de software e design de sistemas que envolvem a manipulação de dados.
+
+### Como criar um Banco de Dados?
+
+Existem 2 formas de criar um Banco de Dados Na primeira opção podemos criar de forma manual clicando com o botão direito em cima da pasta Banco de Dados, e depois em Novo Banco de Dados. A segunda opção seria através de um código simples em SQL.
+
+Usando a segunda opção como exemplo abaixo, criando o banco de dados chamado BDTeste:
+
+```
+CREATE DATABASE BDTeste
+```
+**Importante**
+
+A função **USE**
+```
+USE BDTeste -- Serve para selecionar o banco de dados que será usado. Para, por exemplo, não criar tabelas em bancos diferentes
+```
+
+#### Excluir o banco de dados criado
+```
+DROP DATABASE BDTeste
+```
+
+### Como criar uma tabela?
+
+#### Pontos importantes
+
+Após a criação do Banco de Dados, vamos começar a adicionar tabelas dentro dele. Mas antes, alguns pontos importantes que devemos
+ter em mente ao criar uma nova tabela
+
+**1 -** Cada coluna da tabela deve conter um tipo específico de informação. Por exemplo, uma coluna de "Nome" deve conter apenas nomes, e o mesmo princípio se aplica a todas as outras colunas. É essencial manter um padrão para o tipo de informação em cada coluna, evitando misturar diferentes tipos de dados.
+
+**2 -** As tabelas devem ter uma estrutura fixa, e para adicionar uma nova informação, como um novo cliente, adicionamos uma nova linha à tabela. Se a prática for adicionar uma nova coluna sempre que surge uma nova informação, é recomendável revisar a estrutura da tabela para garantir uma abordagem mais eficiente e consistente.
+
+**3 -** Cada coluna vai ter um mesmo tipo de dado. Ou seja, na coluna de ID, sempre teremos um número na coluna de Nome, sempre teremos textos, na coluna de data, sempre datas, e assim vai. 
+
+#### Processo de criação 
+
+##### CREATE TABLE
+
+O comando CREATE TABLE vai nos permitir criar uma nova tabela. Abaixo, temos um exemplo da estrutura para utilização do comando.
+É neste momento que declaramos o tipo de cada dado:
+```
+CREATE TABLE Produtos(
+	id_produto INT, 
+	nome_produto VARCHAR(200), 
+	data_validade DATETIME,
+	preço_produto FLOAT
+)
+```
+##### INSERT INTO
+
+Será através do comando INSERT INTO que vamos adicionar novos valores em nossa tabela. Além deste comando, precisaremos também do VALUES para especificar os valores adicionados:
+```
+INSERT INTO Produtos1(id_produto, nome_produto, data_validade, preço_produto)
+VALUES
+	(1, 'Arroz', '31/12/2023', 22.50),
+	(2, 'Feijão', '08/12/2023', 8.50)
+```
+##### UPDATE
+
+Através do comando UPDATE conseguiremos atualizar um valor dentro de uma tabela Geralmente esse comando é utilizado em conjunto com o WHERE, que vai nos possibilitar identificar a linha onde vamos fazer a alteração
+```
+-- Diante do banco de dados Produtos criado anteriormente, altere a data de validade do item feijão
+
+UPDATE Produtos 
+SET data_validade = '09/12/2023'
+WHERE id_produto = 2
+```
+##### ALTER TABLE: Adicionar coluna
+
+Para adicionar uma coluna, utilizamos o comando ALTER TABLE em conjunto com o comando ADD.
+
+```
+ALTER TABLE
+ADD custo FLOAT
+```
+Em seguida, utilizamos o UPDATE em conjunto com o WHERE para atualizar os valores dessa coluna
+```
+UPDATE Produtos
+SET custo = 0.60
+WHERE id_produto = 2
+```
+
+##### ALTER TABLE: Alterando tipo de dados
+
+Para alterar o tipo de dados de uma coluna, basta seguir o exemplo abaixo
+```
+ALTER TABLE Produtos
+ALTER COLUMN preço_produto INT
+```
+
+##### ALTER TABLE: Excluindo uma coluna de uma tabela
+ALTER TABLE Produtos
+DROP COLUMN custo
+
+##### DELETE
+
+O comando DELETE é o que vai permitir a exclusão de dados em uma tabela Observe que ainda não estamos falando de exclusão de tabelas, e sim exclusão de dados dentro de uma tabela
+```
+-- Delete o item feijão
+
+DELETE 
+FROM Produtos
+WHERE id_produto = 2
+```
+
+##### DROP TABLE
+
+O comando DROP TABLE permite a exclusão definitiva de uma tabela dentro de um Banco de Dados
+```
+DROP TABLE Produtos
+```
+
+### Exemplos Práticos 
+
+1 - a) Crie um banco de dados chamado BD_Teste.
+```
+CREATE DATABASE BD_Teste
+```
+b) Exclua o banco de dados criado no item anterior.
+```
+DROP DATABASE BD_Teste
+```
+c) Crie um banco de dados chamado Exercicios.
+```
+CREATE DATABASE Exercicios
+```
+2 - No banco de dados criado no exercício anterior, crie 3 tabelas, cada uma contendo as seguintes colunas:
+Tabela 1: dCliente
+- ID_Cliente
+- Nome_Cliente
+- Data_de _Nascimento
+Tabela 2: dGerente
+- ID_Gerente
+- Nome_Gerente
+- Data_de_Contratacao
+- Salario
+Tabela 3: fContratos
+- ID_Contrato
+- Data_de_Assinatura
+- ID_Cliente
+- ID_Gerente
+- Valor_do_Contrato
+Lembre-se dos seguintes pontos:
+a) Garantir que o Banco de Dados Exercicios está selecionado.
+b) Definir qual será o tipo de dados mais adequado para cada coluna das tabelas. Lembrando que os tipos de dados mais comuns são: INT, FLOAT, VARCHAR e DATETIME.
+Por fim, faça um SELECT para visualizar cada tabela. 
+```
+USE Exercicios
+
+--Tabela 1: dCliente
+CREATE TABLE dCliente(
+	ID_Cliente INT, 
+	Nome_Cliente VARCHAR(200), 
+	Data_de_Nascimento DATETIME
+)
+
+SELECT * FROM dCliente
+```
+```
+--Tabela 2: dGerente
+
+CREATE TABLE dGerente(
+	ID_Gerente INT, 
+	Nome_Gerente VARCHAR(200), 
+	Data_de_Contratacao DATETIME,
+	Salario FLOAT
+)
+
+SELECT * FROM dGerente
+```
+```
+--Tabela 3: fContratos
+
+CREATE TABLE fContratos(
+	ID_Contrato INT,
+	Data_de_Assinatura DATETIME,
+	ID_Cliente INT,
+	ID_Gerente INT, 
+	Valor_do_Contrato FLOAT 
+	
+)
+
+SELECT * FROM dGerente
+SELECT * FROM dCliente
+SELECT * FROM fContratos
+```
+
+
+3 - Em cada uma das 3 tabelas, adicione os seguintes valores:
+```
+--Tabela 1: dCliente
+INSERT INTO dCliente(ID_Cliente, Nome_Cliente, Data_de_Nascimento)
+VALUES 
+	(1, 'André Martins', '12/02/1989'),
+	(2, 'Bárbara Campos', '07/05/1992'),
+	(3, 'Carol Freitas', '23/04/1985'),
+	(4, 'Diego Cardoso', '11/10/1994'),
+	(5, 'Eduardo Pereira', '09/11/1988'),
+	(6, 'Gustavo Barbosa', '27/06/1993'),
+	(7, 'Helen Viana', '11/02/1990')
+
+SELECT * FROM dCliente
+```
+```
+--Tabela 2: dGerente
+
+INSERT INTO dGerente(ID_Gerente, Nome_Gerente, Data_de_Contratacao, Salario)
+VALUES 
+	(1, 'Lucas Sampaio', '21/03/2015', 6700),
+	(2, 'Mariana Padilha', '10/01/2011', 9900),
+	(3, 'Nathália Santos', '03/10/2018', 7200),
+	(4, 'Otávio Costa', '18/04/2017', 11000)
+
+SELECT * FROM dGerente
+```
+```
+--Tabela 3: fContratos
+
+INSERT INTO fContratos(ID_Contrato, Data_de_Assinatura, ID_Cliente, ID_Gerente, Valor_do_Contrato)
+VALUES 
+	(1, '12/01/2019', 8, 1, 23000),
+	(2, '10/02/2019', 3, 2, 15500),
+	(3, '07/03/2019', 7, 2, 6500),
+	(4, '15/03/2019', 1, 3, 33000),
+	(5, '21/03/2019', 5, 4, 11100),
+	(6, '23/03/2019', 4, 2, 5500),
+	(7, '28/03/2019', 9, 3, 55000),
+	(8, '04/04/2019', 2, 1, 31000),
+	(9, '05/04/2019', 10, 4, 3400),
+	(10, '05/04/2019', 6, 2, 9200)
+
+SELECT * FROM fContratos
+```
+
+4 - Novos dados deverão ser adicionados nas tabelas dCliente, dGerente e fContratos. Fique livre para adicionar uma nova linha em cada tabela contendo, respectivamente,
+
+```
+--(1) um novo cliente (id cliente, nome e data de nascimento)
+
+
+INSERT INTO dCliente(ID_Cliente, Nome_Cliente, Data_de_Nascimento)
+VALUES 
+	(8, 'Lionel Messi', '24/06/1987')
+
+SELECT * FROM dCliente
+```
+```
+--(2) um novo gerente (id gerente, nome, data de contratação e salário)
+
+
+INSERT INTO dGerente(ID_Gerente, Nome_Gerente, Data_de_Contratacao, Salario)
+VALUES 
+	(5, 'Welington Fonseca', '03/04/1992', 5500)
+
+DELETE -- Precisei apagar uma linha duplicada que criei erroneamente
+FROM dGerente
+WHERE ID_Gerente = 1 AND Nome_Gerente = 'Welington Fonseca'
+
+SELECT * FROM dGerente
+```
+```
+--(3) um novo contrato (id, data assinatura, id cliente, id gerente, valor do contrato)
+
+
+INSERT INTO fContratos(ID_Contrato, Data_de_Assinatura, ID_Cliente, ID_Gerente, Valor_do_Contrato)
+VALUES 
+	(11, '07/12/2023', 2, 5, 100000)
+
+SELECT * FROM fContratos
+```
+
+5 - O contrato de ID igual a 4 foi registrado com alguns erros na tabela fContratos. Faça uma alteração na tabela atualizando os seguintes valores:
+
+  * Data_de_Assinatura: 17/03/2019
+  * ID_Gerente: 2
+  * Valor_do_Contrato: 33500
+```  
+UPDATE fContratos
+SET Data_de_Assinatura = '17/03/2019', ID_Gerente = 2, Valor_do_Contrato = 33500
+WHERE ID_Contrato = 4
+
+SELECT * FROM fContratos
+```
+
+6 - Delete a linha da tabela fContratos que você criou na questão 4.
+```
+DELETE 
+FROM fContratos
+WHERE ID_Contrato = 11
+
+SELECT * FROM fContratos
+```
