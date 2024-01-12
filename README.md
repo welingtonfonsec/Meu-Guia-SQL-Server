@@ -2921,3 +2921,80 @@ SELECT
 FROM 
 	DimStore
 ```
+
+## SQL Views
+
+Até agora, exploramos consultas ao banco de dados usando comandos como SELECT, GROUP BY e JOINs para visualizar dados temporariamente. No entanto, as tabelas criadas durante essas consultas não são armazenadas permanentemente. Cada vez que executamos um SELECT e, em seguida, outro SELECT, o resultado anterior é perdido.
+
+A solução para preservar esses resultados é usar Views. Views são estruturas que permitem salvar consultas SQL complexas em um formato persistente. Diferentemente das consultas regulares, as Views são armazenadas no banco de dados e podem ser acessadas e consultadas posteriormente. Isso evita a necessidade de recriar consultas várias vezes.
+
+Em resumo, as Views proporcionam uma maneira de salvar consultas frequentemente usadas, oferecendo conveniência e eficiência ao evitar a perda de resultados após cada consulta.
+
+### Tudo bem, mas o que de fato é uma VIEW?
+
+Uma View, ou exibição, é uma tabela virtual gerada por meio de uma consulta a uma ou mais tabelas no banco de dados. Ela se assemelha a uma tabela real, contendo linhas e colunas, e pode incorporar comandos como JOIN, WHERE e outras funções para manipulação de dados.
+
+O diferencial das Views é que elas sempre refletem os dados mais atualizados no banco. Se houver alterações nos dados subjacentes, as Views são automaticamente atualizadas, garantindo que os resultados estejam sempre em sincronia.
+
+Além disso, as Views são persistentes mesmo após o desligamento do servidor ou o fechamento do SQL Server Management Studio (SSMS). Elas proporcionam uma maneira eficiente de armazenar os resultados de consultas SELECT, permitindo o acesso fácil e recorrente a esses dados sem a necessidade de recriar a consulta do zero.
+
+Em resumo, as Views oferecem a conveniência de armazenar e acessar resultados de consultas, comportando-se como tabelas virtuais atualizadas automaticamente.
+
+### Vantagens de usar VIEWS
+
+* **Reaproveitamento**: Sempre que precisarmos, podemos consultar a View, pois ela é armazenada no sistema.
+* **Segurança**: Ao criar uma View, estamos selecionando e exibindo apenas as informações relevantes da tabela original do banco de dados. Isso permite ocultar linhas ou colunas desnecessárias, focando apenas nos dados que são pertinentes para a análise ou consulta específica.
+* **Otimização de tempo**: Ao criar Views, economizamos tempo ao evitar a necessidade de recriar várias consultas SELECT. Isso resulta em um aumento da produtividade, uma vez que as Views fornecem uma maneira eficiente de armazenar e reutilizar consultas complexas de forma conveniente.
+
+### Criando a primeira VIEW
+
+Para criar uma View utilizamos o comando CREATE VIEW. Abaixo temos a estrutura padrão:
+```
+-- Crie uma VIEW contendo as seguintes informações da tabela DimCustomer: FirstName, EmailAddres e BirthDate. Chame essa VIEW de  
+-- vwClientes
+
+GO -- Essa função serve para delimitar o início e o final da CREATE VIEW. Para que o SQL não confunda códigos acima e abaixo como pertencentes a msm Consulta
+CREATE VIEW vwClientes AS
+SELECT
+	FirstName AS 'Nome', 
+	EmailAddress AS 'E-mail',
+	BirthDate AS 'Data de Nascimento'
+FROM
+	DimCustomer
+GO
+
+SELECT * FROM vwClientes
+```
+
+### Alterando uma View criada
+
+Para alterar uma View criada, usamos o comando ALTER VIEW. Abaixo temos um exemplo. A VIEW vwClientes criada anteriormente,
+foi alterada para considerar apenas os clientes do sexo feminino.
+
+```
+-- Altere a VIEW criada no exemplo anterior para incluir apenas os clientes do sexo feminino
+
+GO
+ALTER VIEW vwClientes AS
+SELECT
+	FirstName AS 'Nome', 
+	EmailAddress AS 'E-mail',
+	BirthDate AS 'Data de Nascimento',
+	Gender AS 'Sexo'
+FROM
+	DimCustomer
+WHERE
+	Gender = 'F'
+GO
+
+SELECT * FROM vwClientes
+```
+
+### Excluindo uma View
+
+Para excluir uma View criada, usamos o comando DROP VIEW
+```
+-- Exclua as VIEWs vwClientes e vwProdutos
+
+DROP VIEW vwClientes, vwProdutos
+```
