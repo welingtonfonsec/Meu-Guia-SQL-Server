@@ -3942,6 +3942,7 @@ BEGIN
 	CONTINUE -- ele ao ver o 3 ou o 6, não segue para o PRINT, ele retorna ao inicio do loop para adicionar mais 1
 	PRINT 'O valor do contador é:' + CONVERT(VARCHAR, @VarContador)  
 END
+Resultado:
 O valor do contador é:1
 O valor do contador é:2
 O valor do contador é:4
@@ -3950,6 +3951,6 @@ O valor do contador é:7
 O valor do contador é:8
 O valor do contador é:9
 O valor do contador é:10
-Resultado:
+
 ```
 Note que os números 3 e 6 não aparecem.
