@@ -3813,9 +3813,143 @@ INNER JOIN CTE_categoriaTelevisionseMonitors
 	ON CTE_produtosAdventureWorks.ProductSubcategoryKey = CTE_categoriaTelevisionseMonitors.ProductSubcategoryKey
 ```
 
+## Loops no SQL
 
+### Para que servem os loops?
 
+Um loop em uma linguagem de programação tem como objetivo executar repetidas vezes uma série de comandos.
 
+### WHILE Loops
 
+O WHILE (enquanto) é uma estrutura de repetição que tem exatamente esse objetivo. Com ele, conseguimos executar diversas vezes um ou mais comandos, enquanto uma determinada condição é satisfeita. E a partir do momento em que essa condição deixa de ser satisfeita, o loop se encerra.
 
+A estrutura sempre será essa:
+```
+WHILE -- Condição
+BEGIN
+... Comandos
+END
+```
 
+Por exemplo, nesse problema a seguir:
+
+Crie um contador que faça uma contagem de 1 ate 10 utilizando a estrutura de repetição WHILE
+
+```
+DECLARE @VarContador INT
+SET @VarContador = 1
+
+WHILE @VarContador <= 10
+BEGIN 
+	PRINT 'O valor do contador é:' + CONVERT(VARCHAR, @VarContador) -- Aqui foi necessário converter a variavel INT em VARCHAR para poder juntar no print
+	SET @VarContador = @VarContador + 1 -- ESSE PASSO É O MAIS IMPORTANTE, SEM ELE TERÍAMOS UM LOOP INFINITO
+END
+
+Resultado
+O valor do contador é:1
+O valor do contador é:2
+O valor do contador é:3
+O valor do contador é:4
+O valor do contador é:5
+O valor do contador é:6
+O valor do contador é:7
+O valor do contador é:8
+O valor do contador é:9
+O valor do contador é:10
+```
+
+### WHILE Loops - BREAK
+
+Finaliza o WHILE antes do tempo
+
+Veja no exemplo a seguir:
+
+Faça um contador de 1 a 100. OBS: Se o valor do contador for igual a 15, então loop WHILE deve ser encerrado
+```
+DECLARE @VarContador INT
+SET @VarContador = 1
+
+WHILE @VarContador <= 100
+BEGIN
+	IF @VarContador = 15
+	BREAK
+	PRINT 'O valor do contador é:' + CONVERT(VARCHAR, @VarContador)
+	SET @VarContador = @VarContador +1
+END
+Resultado:
+O valor do contador é:1
+O valor do contador é:2
+O valor do contador é:3
+O valor do contador é:4
+O valor do contador é:5
+O valor do contador é:6
+O valor do contador é:7
+O valor do contador é:8
+O valor do contador é:9
+O valor do contador é:10
+O valor do contador é:11
+O valor do contador é:12
+O valor do contador é:13
+O valor do contador é:14
+```
+Note que o número 15 não apareceu. Veja a correção a seguir
+
+```
+DECLARE @VarContador INT
+SET @VarContador = 1
+
+WHILE @VarContador <= 100
+BEGIN
+	PRINT 'O valor do contador é:' + CONVERT(VARCHAR, @VarContador) -- 
+	IF @VarContador = 15
+	BREAK
+	SET @VarContador = @VarContador +1
+END
+-- Se eu quero que conte até 15 e pare, é assim: coloque o PRINT antes do IF e o BREAK
+Resultado:
+O valor do contador é:1
+O valor do contador é:2
+O valor do contador é:3
+O valor do contador é:4
+O valor do contador é:5
+O valor do contador é:6
+O valor do contador é:7
+O valor do contador é:8
+O valor do contador é:9
+O valor do contador é:10
+O valor do contador é:11
+O valor do contador é:12
+O valor do contador é:13
+O valor do contador é:14
+O valor do contador é:15
+```
+
+### Loop While: CONTINUE
+
+No SQL Server, a instrução CONTINUE é usada dentro de uma estrutura de repetição WHILE para pular para a próxima iteração do loop sem executar o código restante dentro do bloco. Isso permite que você controle o fluxo do loop com base em uma condição específica.
+
+Veja no exemplo a seguir:
+
+Faça um contador de 1 a 10. OBS: os números 3 ou 6 não podem ser printados na tela
+```
+DECLARE @VarContador INT
+SET @VarContador = 0
+
+WHILE @VarContador < 10 -- se tivesse um <=10 iria aparecer um 11 lá no resultado. pq 11 seria < ou = a 10 e assim o loop adicionaria mais 1
+BEGIN 
+	SET @VarContador = @VarContador +1 -- quando o contador se inicia de 0, o SET tem que ser antecipado
+	IF @VarContador = 3 OR @VarContador = 6  
+	CONTINUE -- ele ao ver o 3 ou o 6, não segue para o PRINT, ele retorna ao inicio do loop para adicionar mais 1
+	PRINT 'O valor do contador é:' + CONVERT(VARCHAR, @VarContador)  
+END
+O valor do contador é:1
+O valor do contador é:2
+O valor do contador é:4
+O valor do contador é:5
+O valor do contador é:7
+O valor do contador é:8
+O valor do contador é:9
+O valor do contador é:10
+Resultado:
+```
+Note que os números 3 e 6 não aparecem.
