@@ -20,9 +20,9 @@
 
 [10. SQL Views](#sql-views)
 
-[11. CRUD](#CRUD)
+[11. CRUD](#crud)
 
-[12. Subqueries e CTE's](#subqueries-e-cte's)
+[12. Subquery e CTE](#subquery-e-cte)
 
 [13. Loops no SQL](#loops-no-sql)
 
@@ -3526,7 +3526,7 @@ WHERE ID_Contrato = 11
 SELECT * FROM fContratos
 ```
 
-## Subqueries e CTE's 
+## Subquery e CTE 
 
 A abordagem a seguir é muito resumida.O foco desse capítulo são de fato os exemplos práticos. Mas para um início, consdero ser um bom ponto de partida. 
 
