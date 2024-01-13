@@ -22,7 +22,7 @@
 
 [11. CRUD](#CRUD)
 
-[12. Subqueries e CTE's](#Subqueries-cte's)
+[12. Subqueries e CTE's](#subqueries-cte's)
 
 [13. Loops no SQL](#loops-no-sql)
 
@@ -3525,3 +3525,297 @@ WHERE ID_Contrato = 11
 
 SELECT * FROM fContratos
 ```
+
+## Subqueries e CTE's
+
+A abordagem a seguir é muito resumida.O foco desse capítulo são de fato os exemplos práticos. Mas para um início, consdero ser um bom ponto de partida. 
+
+### Subqueries (Subconsultas):
+
+As subqueries, ou subconsultas, são consultas aninhadas dentro de uma consulta principal. Elas podem ser utilizadas em cláusulas WHERE, FROM, SELECT ou HAVING. A subquery fornece um conjunto de resultados que é utilizado pela consulta principal para realizar operações mais complexas. Por exemplo:
+```
+SELECT Nome
+FROM Clientes
+WHERE ID IN (SELECT ClienteID FROM Pedidos WHERE Total > 1000);
+```
+Neste exemplo, a subquery obtém os IDs dos clientes que fizeram pedidos com total superior a 1000, e a consulta principal lista os nomes desses clientes.
+
+### CTE (Common Table Expressions):
+
+CTEs, ou Common Table Expressions, são estruturas temporárias que podem ser referenciadas dentro de uma consulta SELECT, INSERT, UPDATE ou DELETE. Elas melhoram a legibilidade do código e permitem a criação de consultas mais complexas. Exemplo:
+
+```
+WITH VendasCrescentes AS (
+  SELECT Produto, Quantidade, ROW_NUMBER() OVER (PARTITION BY Produto ORDER BY Quantidade DESC) as Ranking
+  FROM Vendas
+)
+SELECT Produto, Quantidade
+FROM VendasCrescentes
+WHERE Ranking = 1;
+```
+Neste exemplo, a CTE "VendasCrescentes" calcula um ranking para cada produto com base na quantidade de vendas, e a consulta principal retorna os produtos com a maior quantidade vendida (Ranking = 1) a partir da CTE.
+
+Em resumo, subqueries são consultas incorporadas em outras consultas para fornecer resultados específicos, enquanto CTEs são estruturas temporárias que melhoram a legibilidade e organização do código SQL. Ambas são ferramentas poderosas para manipulação de dados no SQL Server.
+
+### Quais vantagens das Subqueries e CTE's?
+
+Tanto subqueries quanto Common Table Expressions (CTEs) são recursos poderosos no SQL Server que têm diferentes propósitos e são utilizados em situações específicas para melhorar a legibilidade, modularidade e desempenho das consultas. Aqui estão alguns motivos para usar cada um:
+
+#### Subqueries:
+
+  * **Filtragem Complexa**: Subqueries são frequentemente usadas para realizar filtragens complexas ou para recuperar dados relacionados que são usados como critérios em uma consulta principal.
+
+  * **Comparação com Agregações**: Podem ser úteis quando é necessário comparar uma condição em relação a um valor agregado de outra tabela.
+
+  * **Subconsultas Correlacionadas**: Permitem referenciar colunas da consulta principal na subquery, o que é útil quando a subquery precisa depender do contexto da consulta principal.
+
+#### CTEs
+
+  * **Melhor Legibilidade**: CTEs melhoram a legibilidade do código, especialmente em consultas complexas, ao permitir a definição de partes da lógica da consulta como uma expressão nomeada.
+
+  * **Reutilização de Código**: Se uma lógica de consulta precisa ser usada várias vezes, definir essa lógica em uma CTE permite a reutilização do código, evitando repetições desnecessárias.
+
+  * **Melhoria do Desempenho**: Em alguns casos, o otimizador de consulta pode se beneficiar do uso de CTEs para melhorar o desempenho, especialmente quando partes da lógica da consulta podem ser pré-calculadas e reutilizadas.
+
+### Exemplos Práticos 
+
+1 - Para fins fiscais, a contabilidade da empresa precisa de uma tabela contendo todas as vendas referentes à loja 'Contoso Orlando Store'. Isso porque essa loja encontra-se em uma região onde a tributação foi modificada recente.
+
+Portanto, crie uma consulta ao Banco de Dados para obter uma tabela FactSales contendo todas as vendas desta loja.
+
+```
+SELECT * FROM FactSales
+WHERE StoreKey = 
+	(SELECT StoreKey FROM DimStore
+		WHERE StoreName = 'Contoso Orlando Store')
+```
+
+2 - O setor de controle de produtos quer fazer uma análise para descobrir quais são os produtos que possuem um UnitPrice maior que o UnitPrice do produto de ID igual a 1893.
+
+a) A sua consulta resultante deve conter as colunas ProductKey, ProductName e UnitPrice da Tabela DimProduct
+
+b) Nessa Query você também deve retornar uma coluna extra, que informe o UnitPrice do produto 1893
+```
+WITH preço_acima_do_ID_1893 AS (
+    SELECT
+        ProductKey,
+        ProductName AS 'Produtos com Preço acima do ID 1893',
+        UnitPrice
+    FROM
+        DimProduct
+    WHERE
+        UnitPrice > (
+            SELECT 
+                UnitPrice
+            FROM
+                DimProduct
+            WHERE 
+                ProductKey = 1893
+        )
+),
+preço_ID_1893 AS (
+SELECT
+	UnitPrice AS 'Preço ID 1893'
+FROM
+    DimProduct
+WHERE ProductKey = 1893
+)
+
+SELECT
+	*
+FROM
+	preço_acima_do_ID_1893,
+	preço_ID_1893 
+```
+
+3 - A empresa Contoso criou um programa de bonificação chamado "Todos por 1". Este programa consistia no seguinte: 1 funcionário seria escolhido ao final do ano como o funcionário destaque, só que a bonificação seria recebida por todos da área daquele funcionário em particular. O objetivo desse programa seria o de incentivar a colaboração coletiva entre os funcionários de uma mesma área. 
+Desta forma, o funcionário destaque beneficiaria não só a si, mas também a todos os colegas de sua área.
+
+Ao final do ano, o funcionário escolhido como destaque foi o Miguel Severino. Isso significa que todos os funcionários da área do Miguel seriam beneficiados com o programa.
+
+O seu objetivo é realizar uma consulta à tabela DimEmployee e retornar todos os funcionários da área "vencedora" para que o setor Financeiro possa realizar os pagamentos das bonificações.
+
+```
+SELECT  -- Primeiro o descobrir qual é o nome do departamento
+	DepartmentName
+FROM
+	DimEmployee
+WHERE FirstName = 'Miguel' AND LastName = 'Severino'
+```
+```
+SELECT * FROM DimEmployee -- Agora anexar a consulta anterior como subquery e receber o nome as pessoas que fazem parte
+WHERE DepartmentName = 
+	(SELECT DepartmentName FROM DimEmployee WHERE FirstName = 'Miguel' AND LastName = 'Severino')
+```
+
+4 - Faça uma query que retorne os clientes que recebem um salario anual acima da média. A sua query deve retornar as colunas CustomerKey, FirstName, LastName, EmailAddress e YearlyIncome
+
+Obs: Considere apenas os clientes que são 'Pessoas Físicas'
+```
+SELECT  -- Primeiro o descobrir qual média
+	AVG(YearlyIncome)
+FROM
+	DimCustomer
+WHERE
+	CustomerType = 'Person'
+```
+```
+SELECT -- Agora anexar a consulta anterior como subquery e receber o nome as pessoas que recebem mais
+	CustomerKey,
+	FirstName,
+	LastName,
+	EmailAddress,
+	YearlyIncome,
+	CustomerType
+FROM DimCustomer 
+WHERE CustomerType ='Person' AND YearlyIncome > 
+	(SELECT AVG(YearlyIncome) FROM DimCustomer WHERE CustomerType = 'Person')
+```
+	
+5 - A ação de desconto da Asian Holiday Promotion foi uma das mais bem sucedidas da empresa. Agora, a Contoso quer entender um pouco melhor sobre o perfil dos clientes que compraram produtos nessa promoção.
+
+Seu trabalho é criar uma query que retorne a lista de clientes que compraram nessa promoção
+
+```
+SELECT				-- TERCEIRO PASSO E ULTIMO PASSO - COM OS ID DOS CLIENTES, ENCONTRE TODAS AS INFORMAÇÕES CADASTRADAS
+	*				
+FROM
+	DimCustomer
+WHERE CustomerKey IN (
+	SELECT          -- SEGUNDO PASSO - ENCONTRE QUAL O ID DOS CLIENTES
+		DISTINCT CustomerKey
+	FROM 
+		FactOnlineSales
+	WHERE PromotionKey IN (
+			SELECT   -- PRIMEIRO PASSO - ENCONTRE QUAL O ID DESSA PROMOÇÃO
+				PromotionKey
+			FROM 
+				DimPromotion
+			WHERE PromotionName = 'asian holiday promotion' 
+)
+)
+```
+
+6 - A empresa emplementou um programa de fidelização de clientes empresariais. Todos aqueles que comprarem mais de 3000 unidades de um mesmo produto receberá descontos em outras compras.
+
+Você deverá descobrir as informações de CustomerKey e CompanyName
+
+```
+SELECT
+	*
+FROM
+	DimCustomer
+WHERE CustomerKey IN (
+	SELECT
+		CustomerKey
+	FROM 
+		FactOnlineSales
+	WHERE CustomerKey IN (
+		SELECT				
+			CustomerKey				
+		FROM
+			DimCustomer
+		WHERE
+			CustomerType = 'Company'
+	) 
+GROUP BY 
+	CustomerKey
+HAVING 
+	SUM(SalesQuantity) > 3000
+);
+```
+
+7 - Você deverá criar uma consulta para o setor de vendas que mostre as seguintes colunas da tabela DimProduct: ProductKey, ProductName, BrandName, UnitPrice, Média de UnitPrice
+```
+SELECT
+	ProductKey,
+	ProductName,
+	BrandName,
+	UnitPrice,
+	(SELECT AVG(UnitPrice) FROM DimProduct) AS 'UnitPrice (AVG)'
+FROM
+	DimProduct
+```
+
+8 - Faça uma consulta para descobrir os seguintes indicadores dos seus produtos
+
+  * Maior quantidade de produtos por marca
+  * Menor quantidade de produtos por marca
+  * Média de produtos por marca
+
+```
+SELECT 
+	MAX(Quantidade) AS 'Maximo',
+	MIN(Quantidade) AS 'Minimo',
+	AVG(Quantidade) AS 'Média'
+FROM ( 
+	SELECT 
+		BrandName,
+		COUNT(*) AS 'Quantidade'
+	FROM
+		DimProduct
+	GROUP BY 
+		BrandName ) AS T
+```
+
+9 - Crie uma CTE que seja o agrupamento da tabela DimProduct, armazenando o total de produtos por marca. Em seguida, faça um SELECT nessa CTE descobrindo qual é a quantidade máxima de produtos para uma marca. Chame esta CTE de CTE_QntProdutosPorMarca.
+```
+WITH CTE_QntProdutosPorMarca AS (
+SELECT 
+	BrandName,
+	COUNT(*) AS 'Quantidade'
+FROM
+	DimProduct
+GROUP BY 
+	BrandName
+)	
+```
+```
+SELECT
+	MAX(Quantidade) AS 'Máximo'
+FROM 
+	CTE_QntProdutosPorMarca
+```	
+
+10. Crie duas CTE's 
+
+  * (i) A primeira deve conter as colunas ProductKey, ProductName, ProductSubcategoryKey, BrandName e UnitPrice, da tabela DimProduct, mas apenas os produtos da marca Adventure Works. Chame esse CTE de CTE_produtosAdventureWorks
+  * (ii) A segunda deve conter as colunas ProductSubcategoryKey, ProductSubcategoryName, da tabela DimProductSubcategory mas apenas para as subcategorias 'Televisions e Monitors'. Chame esse CTE de CTE_categoriaTelevisionseRadios
+  * Faça uma JOIN entre as duas CTE's, e o resultado deve ser uma query contendo todas as colunas das duas tabelas. 
+```
+WITH CTE_produtosAdventureWorks AS (
+	SELECT
+		ProductKey, 
+		ProductName, 
+		ProductSubcategoryKey, 
+		BrandName, 
+		UnitPrice
+	FROM
+		DimProduct
+	WHERE BrandName = 'Adventure Works'
+),
+CTE_categoriaTelevisionseMonitors AS (
+	SELECT
+		ProductSubcategoryKey, 
+		ProductSubcategoryName 
+	FROM
+		DimProductSubcategory
+	WHERE ProductSubcategoryName IN('Televisions','Monitors')
+)
+```
+```
+SELECT 
+	CTE_produtosAdventureWorks.*,
+	CTE_categoriaTelevisionseMonitors.ProductSubcategoryName
+FROM 
+	CTE_produtosAdventureWorks
+INNER JOIN CTE_categoriaTelevisionseMonitors
+	ON CTE_produtosAdventureWorks.ProductSubcategoryKey = CTE_categoriaTelevisionseMonitors.ProductSubcategoryKey
+```
+
+
+
+
+
+
+
