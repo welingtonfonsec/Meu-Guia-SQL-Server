@@ -26,7 +26,7 @@
 
 [13. Loops no SQL](#loops-no-sql)
 
-[14. Window Functions](#windows-function)
+[14. Window Functions](#window-function)
 
 [15. Regex - Regular Expressions](#regex-regular-expressions)
 
@@ -4014,4 +4014,436 @@ BEGIN
 END
 
 SELECT * FROM Calendario;
+```
+
+## Window Function
+
+As Window Functions (funções de janela) no SQL Server são um conjunto de funções analíticas que operam em um conjunto de linhas relacionadas a uma linha atual em uma consulta. Essas funções fornecem uma maneira eficiente de realizar cálculos e agregações em subconjuntos específicos de dados em uma janela (window) definida pela cláusula OVER.
+
+### Para que servem?
+
+As Window Functions são ferramentas poderosas para realizar cálculos avançados em análises de dados no SQL Server. Suas principais funcionalidades incluem:
+
+  * **Cálculos Avançados:** Permitem realizar cálculos mais avançados do que aqueles proporcionados pelas funções agregadas tradicionais, como SUM, AVG, MIN e MAX;
+  * **Funcionamento Similar ao GROUP BY:** Oferecem uma abordagem semelhante ao GROUP BY, mas com maior flexibilidade e personalização. Enquanto o GROUP BY cria agregações em todo o conjunto de dados, as Window Functions permitem especificar uma "janela" mais detalhada para os cálculos;
+  * **Definição da Janela com a Instrução OVER:** A cláusula OVER é fundamental para especificar a "janela" na qual as funções de janela serão aplicadas. Ela define o conjunto de linhas relacionadas a uma linha atual, permitindo cálculos personalizados.
+  * **Divisão em Partições com a Instrução PARTITION BY:** A cláusula PARTITION BY é utilizada para dividir o conjunto de dados em "partições", permitindo que as funções de janela sejam aplicadas individualmente a cada partição. Isso é útil para realizar cálculos distintos em subconjuntos específicos dos dados.
+
+Em resumo, as Window Functions oferecem uma abordagem mais avançada e personalizável para análises de dados, permitindo uma manipulação mais granular e flexível das informações em comparação com as funções agregadas tradicionais.
+
+### Finalidades
+
+#### Calculo de agregação: COUNT, SUM, AVG, MIN, MAX
+
+As funções de janela COUNT, SUM, AVG, MIN e MAX no SQL Server são ferramentas poderosas para realizar cálculos agregados em conjuntos de dados específicos, conhecidos como janelas, definidos pela cláusula OVER.
+
+**COUNT()**: Esta função conta o número de linhas em uma janela específica. É útil quando você precisa saber a contagem de registros em grupos distintos dentro do seu conjunto de dados.
+
+Exemplo:
+```
+SELECT
+    Departamento,
+    Nome,
+    Salario,
+    COUNT(*) OVER (PARTITION BY Departamento) AS ContagemPorDepartamento
+FROM Funcionarios;
+```
+
+**SUM():** A função SUM() calcula a soma dos valores em uma janela. É útil para obter totalizações em subconjuntos específicos dos seus dados.
+
+```
+SELECT
+    Departamento,
+    Nome,
+    Salario,
+    SUM(Salario) OVER (PARTITION BY Departamento) AS SomaSalarioPorDepartamento
+FROM Funcionarios;
+```
+
+**AVG():** A função AVG() calcula a média dos valores em uma janela. É útil quando você precisa obter a média de um atributo para grupos específicos.
+
+```
+SELECT
+    Departamento,
+    Nome,
+    Salario,
+    AVG(Salario) OVER (PARTITION BY Departamento) AS MediaSalarioPorDepartamento
+FROM Funcionarios;
+```
+
+**MIN():** A função MIN() retorna o valor mínimo dentro de uma janela, útil quando você deseja encontrar o menor valor em subconjuntos dos seus dados.
+```
+SELECT
+    Departamento,
+    Nome,
+    Salario,
+    MIN(Salario) OVER (PARTITION BY Departamento) AS MenorSalarioPorDepartamento
+FROM Funcionarios;
+```
+
+**MAX():** A função MAX() retorna o valor máximo dentro de uma janela. É útil para encontrar o maior valor em grupos específicos.
+```
+SELECT
+    Departamento,
+    Nome,
+    Salario,
+    MAX(Salario) OVER (PARTITION BY Departamento) AS MaiorSalarioPorDepartamento
+FROM Funcionarios;
+```
+
+Essas funções de janela permitem análises mais avançadas, proporcionando uma visão mais granular dos dados em subconjuntos específicos definidos pela cláusula OVER.
+
+
+#### Calculo de deslocamento: FIRST_VALUE, LAST_VALUE, LEAD, LAG
+
+As funções de janela FIRST_VALUE, LAST_VALUE, LEAD e LAG no SQL Server são usadas para acessar valores de linhas relacionadas em uma janela de dados definida pela cláusula OVER. Aqui está uma explicação mais detalhada de cada uma:
+
+**FIRST_VALUE():** Retorna o valor da primeira linha dentro de uma janela, geralmente ordenada por uma determinada condição.
+```
+SELECT
+    Nome,
+    Salario,
+    FIRST_VALUE(Salario) OVER (PARTITION BY Departamento ORDER BY Salario) AS PrimeiroSalarioPorDepartamento
+FROM Funcionarios;
+```
+
+**LAST_VALUE():** Retorna o valor da última linha dentro de uma janela. No entanto, é importante notar que o comportamento padrão pode não retornar os resultados desejados, pois LAST_VALUE não considera empates na ordenação.
+```
+SELECT
+    Nome,
+    Salario,
+    LAST_VALUE(Salario) OVER (PARTITION BY Departamento ORDER BY Salario ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS UltimoSalarioPorDepartamento
+FROM Funcionarios;
+```
+
+**LEAD():** Retorna o valor da próxima linha dentro de uma janela.
+```
+SELECT
+    Nome,
+    Salario,
+    LEAD(Salario) OVER (PARTITION BY Departamento ORDER BY Salario) AS ProximoSalarioPorDepartamento
+FROM Funcionarios;
+```
+
+**LAG():** Retorna o valor da linha anterior dentro de uma janela.
+```
+SELECT
+    Nome,
+    Salario,
+    LAG(Salario) OVER (PARTITION BY Departamento ORDER BY Salario) AS SalarioAnteriorPorDepartamento
+FROM Funcionarios;
+```
+
+Essas funções são úteis para acessar dados de linhas adjacentes em uma janela, permitindo análises mais avançadas e comparações entre valores consecutivos. A cláusula OVER é fundamental para definir o escopo da janela na qual essas funções operam.
+
+#### Calculos estatíscos: RANK, DENSE_RANK, NTILE
+
+As funções de janela RANK, DENSE_RANK e NTILE no SQL Server são usadas para realizar classificações e distribuições em conjuntos de dados específicos, conhecidos como janelas, definidos pela cláusula OVER. Aqui está uma explicação mais detalhada de cada uma:
+
+**RANK():** A função RANK atribui uma classificação única a cada linha dentro de uma janela, com valores iguais recebendo a mesma classificação, e a próxima classificação sendo a próxima após os empates.
+
+```
+SELECT
+    Nome,
+    Salario,
+    RANK() OVER (PARTITION BY Departamento ORDER BY Salario DESC) AS RankingPorDepartamento
+FROM Funcionarios;
+```
+**DENSE_RANK():** Similar ao RANK, DENSE_RANK atribui uma classificação única a cada linha dentro de uma janela. No entanto, valores iguais recebem a mesma classificação, mas a próxima classificação é incrementada independentemente dos empates.
+```
+SELECT
+    Nome,
+    Salario,
+    DENSE_RANK() OVER (PARTITION BY Departamento ORDER BY Salario DESC) AS DenseRankPorDepartamento
+FROM Funcionarios;
+```
+**NTILE():** A função NTILE distribui os dados em um número especificado de "telhas" (buckets) e atribui um número de telha a cada linha dentro da janela. Isso é útil para dividir o conjunto de dados em partes iguais.
+```
+SELECT
+    Nome,
+    Salario,
+    NTILE(4) OVER (PARTITION BY Departamento ORDER BY Salario DESC) AS TelhaPorDepartamento
+FROM Funcionarios;
+```
+
+Essas funções são valiosas ao realizar classificações e distribuições mais avançadas em conjuntos de dados específicos, proporcionando uma visão mais detalhada das relações entre os dados. A cláusula OVER é essencial para definir o escopo da janela na qual essas funções operam.
+
+### Exemplos Práticos
+
+Þara resolver os exercícios 1 a 4, crie uma View chamada vwProdutos, que contenha o agrupamento das colunas BrandName, ColorName e os totais de quantidade vendida por marca/cor e também o total de receita por marca/cor.
+```
+select * from vwProdutos
+```
+```
+CREATE VIEW vwProdutos AS
+SELECT
+	BrandName AS 'Marca', 
+	ColorName AS 'Cor',
+	COUNT(*) AS 'Quantidade_Vendida',
+	ROUND(SUM(SalesAmount), 2) AS 'Receita_Total'
+FROM DimProduct
+INNER JOIN FactSales
+		ON DimProduct.ProductKey = FactSales.ProductKey
+GROUP BY BrandName, ColorName;
+```
+```
+SELECT * FROM vwProdutos
+```
+
+1 - Utilize a View vwProdutos para criar uma coluna extra calculando a quantidade total vendida dos produtos.
+```
+SELECT 
+	*,
+	SUM(Quantidade_Vendida) OVER() AS 'Quantidade_Total_Vendida'
+FROM 
+	vwProdutos
+```
+
+2 - Crie mais uma coluna na consulta anterior, Incluindo o total de produtos vendidos para cada marca
+```
+SELECT 
+	*,
+	SUM(Quantidade_Vendida) OVER() AS 'Quantidade_Total_Vendida',
+	SUM(Quantidade_Vendida) OVER(PARTITION BY Marca) AS 'Quantidade_Total_Vendida_por_Marca'
+FROM 
+	vwProdutos
+```
+
+3 - Calcule o % de participação do total de vendas de produtos por marca
+
+Ex: A marca A. Datum teve uma quantidade total de vendas de 199 041 de um total de 3.406.089 de vendas. Isso significa que a da marca A. Datum é 199.041/3.406.089-5,84%
+```
+SELECT 
+	*,
+	SUM(Quantidade_Vendida) OVER() AS 'Quantidade_Total_Vendida',
+	SUM(Quantidade_Vendida) OVER(PARTITION BY Marca) AS 'Quantidade_Total_Vendida_por_Marca',
+	FORMAT(CAST(SUM(Quantidade_Vendida) OVER(PARTITION BY Marca) AS DECIMAL(18, 2)) / CAST(SUM(Quantidade_Vendida) OVER() AS DECIMAL(18, 2)), '0.00%') AS '% do Total'
+FROM
+	vwProdutos;
+
+-- O "CAST" é uma função que está sendo usada para converter (ou "castar") o resultado da soma (SUM) da quantidade vendida para um tipo de dado específico. 
+-- Neste caso, estamos convertendo para o tipo de dado "DECIMAL" com precisão de 18 dígitos, dos quais 2 estão à direita do ponto decimal.
+
+-- O DECIMAL(18, 2) é apenas um tipo de dados que representa números com até 18 dígitos no total, dos quais 2 são após o ponto decimal.
+
+-- O FORMAT '0.00%' está transformando o valor encontrado na divisão em percentual
+```
+
+4 - Crie uma consulta à View vwProdutos, selecionando as colunas Marca, Cor, Quantidade Por Produto e também criando uma coluna extra de Rank para descobrir a posição de cada Marca/Cor. Sua consulta deve ser filtrada para apenas mostrar resultados da marca Contoso.
+```
+SELECT
+	Marca, 
+	Cor,
+	SUM(Quantidade_Vendida) AS 'Quantidade_Por_Produto',
+	RANK() OVER(ORDER BY SUM(Quantidade_Vendida) DESC) AS 'Ranking'
+FROM
+	vwProdutos
+GROUP BY
+	Marca, Cor
+HAVING 
+	Marca = 'Contoso'
+
+SELECT * FROM vwProdutos
+```
+
+**Exercicio Desafio 1**
+
+Para responder os próximos 2 exercicios, você precisará criar uma View auxiliar. Diferente do que foi feito anteriormente, você não terá acesso ao código dessa view antes do gabarito.
+
+A sua view deve se chamar vwHistoricoLojas e deve conter um histórico com a quantidade de lojas abertas a cada Ano/Mês. Os desafios são:
+
+(1) Criar uma coluna de ID para essa View
+
+(2) Relacionar as tabelas DimDate e DimStore
+
+Dicas:
+
+1. A coluna de ID será criada a partir de uma função de janela. Você deverá se atentar a forma como essa coluna deverá ser ordenada, pensando que queremos visualizar uma ordem de Ano/Més que seja: 2005/january, 2005/February... e não 2005/April, 2005/August...
+
+2. As colunas Ano, Més e Otd Lojas correspondem, respectivamente, as seguintes colunas: Calendar Year e Calendar MonthLabel da tabela DimDate e uma contagem da coluna OpenDate da tabela Dimstore
+```
+CREATE VIEW vwHistoricoLojas AS
+SELECT 
+	ROW_NUMBER() OVER(ORDER BY CalendarMonth) AS 'ID',
+	CalendarYear AS 'Ano',
+	CalendarMonthLabel AS 'Mês',
+	COUNT(OpenDate) AS 'Qtd_Lojas'
+FROM DimDate
+LEFT JOIN DimStore
+	ON DimDate.Datekey = DimStore.OpenDate
+GROUP BY CalendarYear, CalendarMonthLabel, CalendarMonth
+```
+```
+SELECT * FROM vwHistoricoLojas 
+```
+
+5 - A partir da view criada no exercicio anterior, você deverá fazer uma soma móvel considerando sempre o mês atual +2 meses atrás
+```
+SELECT
+	*,
+	SUM(Qtd_Lojas) OVER (ORDER BY ID ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS 'Soma Móvel'
+FROM
+	vwHistoricoLojas
+```
+
+6 - Utilize a vwHistoricoLojas para calcular o acumulado de lojas abertas a cada ano/mês.
+```
+SELECT
+	*,
+	SUM(Qtd_Lojas) OVER (ORDER BY ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS 'Acumulado'
+FROM
+	vwHistoricoLojas
+```
+
+**Exercicio Desafio 2**
+
+Neste desafio, você terá que criar suas próprias tabelas e views para conseguir resolver os exercícios 7 e 8. Os próximos exercícios envolverão análises de novos clientes. Para isso, será necessário criar uma nova tabela e uma nova view.
+
+Abaixo, temos um passo a passo para resolver o problema por partes.
+
+PASSO 1: Crle um novo banco de dados chamado Desafio e selecione esse banco de dados criado.
+```
+CREATE DATABASE Desafio
+
+USE Desafio
+```
+
+PASSO 2: Crie uma tabela de datas entre o dia 1 de janeiro do ano com a compra (DateFirstPurchase) mais antiga e o dia 31 de dezembro do ano com a compra mais recente.
+
+Obs1: Chame essa tabela de Calendario.
+
+Obs2: A princípio, essa tabela deve conter apenas 1 coluna, chamada data e do tipo DATE.
+```
+CREATE TABLE Calendario (
+	data DATE 
+)
+DECLARE @varAnoInicial INT = YEAR((SELECT MIN(DateFirstPurchase) FROM 
+ContosoRetailDW.dbo.DimCustomer))
+DECLARE @varAnoFinal INT = YEAR((SELECT MAX(DateFirstPurchase) FROM
+ContosoRetailDW.dbo.DimCustomer))
+
+DECLARE @varDataInicial DATE = DATEFROMPARTS(@varAnoInicial, 1, 1)
+DECLARE @varDataFinal DATE = DATEFROMPARTS(@varAnoFinal, 12, 31)
+
+WHILE @varDataInicial <= @varDataFinal
+BEGIN 
+	INSERT INTO Calendario(data) VALUES(@varDataInicial)
+	SET @varDataInicial = DATEADD(DAY, 1, @varDataInicial)
+END
+
+SELECT * FROM Calendario
+```
+
+PASSO 3: Crie colunas auxiliares na tabela Calendario chamadas: Ano, Mes, Dia, AnoMes e NomeMes. Todas do tipo INT
+```
+ALTER TABLE Calendario
+ADD Ano INT,
+	Mes INT,
+	Dia INT,
+	AnoMes INT,
+	NomeMes VARCHAR(50)
+```
+
+PASSO 4: Adicione na tabela os valores de Ano, Més, Dia, AnoMes e NomeMes (nome do měs em português). 
+Dica: utilize a instrução CASE para verificar o mês e retomar o nome certo.
+```
+UPDATE Calendario SET Ano = YEAR(data)
+
+UPDATE Calendario SET Mes = MONTH(data)
+
+UPDATE Calendario SET Dia = DAY(data)
+
+UPDATE Calendario SET AnoMes = CONCAT(YEAR(data), FORMAT(MONTH(data), '00'))
+
+UPDATE Calendario SET NomeMes = 
+
+			CASE
+					WHEN MONTH(data) = 1 THEN 'Janeiro'
+					WHEN MONTH(data) = 2 THEN 'Fevereiro'
+					WHEN MONTH(data) = 3 THEN 'Março'
+					WHEN MONTH(data) = 4 THEN 'Abril'
+					WHEN MONTH(data) = 5 THEN 'Mato'
+					WHEN MONTH(data) = 6 THEN 'Junho'
+					WHEN MONTH(data) = 7 THEN 'Julho'
+					WHEN MONTH(data) = 8 THEN 'Agosto'
+					WHEN MONTH(data) = 9 THEN 'Setembro'
+					WHEN MONTH(data) = 10 THEN 'Outubro'
+					WHEN MONTH(data) = 11 THEN 'Novembro'
+					WHEN MONTH(data) = 12 THEN 'Dezembro'
+
+			END
+```
+
+PASSO 5: Crie a View vw Novos Clientes, que deve ter as colunas mostradas abaixo.
+```
+CREATE VIEW vwNovosClientes AS
+SELECT 
+	ROW_NUMBER() OVER(ORDER BY AnoMes) AS 'ID',
+	Ano,
+	NomeMes,
+	COUNT(DimCustomer.DateFirstPurchase) AS 'Novos Clientes'
+FROM Calendario
+LEFT JOIN ContosoRetailDW.dbo.DimCustomer
+	ON Calendario.data = DimCustomer.DateFirstPurchase
+GROUP BY Ano, NomeMes, AnoMes
+
+SELECT * FROM vwNovosClientes
+```
+
+7 - a) Faça um cálculo de soma móvel de novos clientes nos últimos 2 meses.
+```
+SELECT
+	*,
+	SUM([Novos Clientes]) OVER (ORDER BY ID ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS 'Soma Móvel'
+FROM
+	vwNovosClientes
+```
+
+b) Faça um cálculo de média móvel de novos clientes nos últimos 2 meses. I
+```
+SELECT
+	*,
+	SUM([Novos Clientes]) OVER (ORDER BY ID ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS 'Soma Móvel',
+	AVG([Novos Clientes]) OVER (ORDER BY ID ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS 'Média Móvel'
+FROM
+	vwNovosClientes
+```
+
+c) Faça um cálculo de acumulado dos novos clientes ao longo do tempo.
+```
+SELECT
+	*,
+	SUM([Novos Clientes]) OVER (ORDER BY ID ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS 'Soma Móvel',
+	AVG([Novos Clientes]) OVER (ORDER BY ID ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS 'Média Móvel',
+	SUM([Novos Clientes]) OVER (ORDER BY ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS 'Acumulado'
+FROM
+	vwNovosClientes
+```
+
+d) Faça um cálculo de acumulado intra-ano, ou seja, um acumulado que vai de janeiro a dezembro de cada ano, e volta a fazer o cálculo de acumulado no ano seguinte.
+```
+SELECT 
+	*,
+	SUM([Novos Clientes]) OVER(PARTITION BY Ano) AS 'acumulado intra-ano'
+FROM
+	vwNovosClientes
+
+OU
+
+SELECT 
+	*,
+	SUM([Novos Clientes]) OVER(PARTITION BY Ano ORDER BY ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS 'acumulado intra-ano'
+FROM
+	vwNovosClientes
+```
+
+8 - Faça os cálculos de MoM e YoY para avaliar o percentual de crescimento de novos clientes, entre o mês atual e o més anterior, e entre um més atual e o mesmo mês do ano anterior.
+```
+SELECT
+    *,
+    LAG([Novos Clientes], 1) OVER (ORDER BY ID) AS Lag_Novos_Clientes,
+	FORMAT(1.0*[Novos Clientes]/NULLIF(LAG([Novos Clientes], 1) OVER(ORDER BY ID), 0) - 1, '0.00%') AS '%MoM',
+	FORMAT(1.0*[Novos Clientes]/NULLIF(LAG([Novos Clientes], 12) OVER(ORDER BY ID), 0) - 1, '0.00%') AS '%YoY'
+FROM
+    vwNovosClientes;
 ```
