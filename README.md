@@ -325,7 +325,7 @@ ORDER BY
 	UnitPrice DESC
  ```
 
-[**TOPO**](#índice)
+[**RETORNE AO INÍCIO**](#índice)
 
 ## Funções de Agregação
 
@@ -549,6 +549,8 @@ SELECT
 FROM
 	DimProduct
 ```
+
+[**RETORNE AO INÍCIO**](#índice)
 
 ## Criando Agrupamentos no SQL
 
@@ -942,6 +944,8 @@ ORDER BY
 	SUM (VacationHours)
 ```
 
+[**RETORNE AO INÍCIO**](#índice)
+
 ## JOINs no SQL
 
 Em SQL, JOINS são utilizados para combinar linhas de duas ou mais tabelas com base em uma condição relacionada. Existem vários tipos de JOINS, cada um atendendo a diferentes cenários de relacionamento entre tabelas.
@@ -1283,6 +1287,8 @@ ORDER BY
 	FactSales.SalesAmount DESC
 ```
 
+[**RETORNE AO INÍCIO**](#índice)
+
 ## Group By com Joins
 
 Ao combinar GROUP BY com JOINS, podemos realizar operações de agregação em conjuntos de dados resultantes da junção de várias tabelas.
@@ -1617,6 +1623,8 @@ ORDER BY
 	DimProduct.BrandName ASC
 ```
 
+[**RETORNE AO INÍCIO**](#índice)
+
 ## Variáveis
 
 No SQL Server, você pode usar variáveis para armazenar valores temporários durante a execução de scripts, procedimentos armazenados ou funções. Aqui estão alguns conceitos relacionados ao uso de variáveis no SQL Server:
@@ -1833,6 +1841,8 @@ FROM
 WHERE
 	ProductSubcategoryKey = @varIdSubcategoria
 ```
+
+[**RETORNE AO INÍCIO**](#índice)
 
 ## Manipulando Strings e Datas no SQL
 
@@ -2451,6 +2461,8 @@ ORDER BY
 	DATEDIFF(DAY, OpenDate, GETDATE()) DESC
 ```
 
+[**RETORNE AO INÍCIO**](#índice)
+
 ## Funções Condicionais
 
 #### CASE WHEN.. ELSE
@@ -2924,6 +2936,8 @@ FROM
 	DimStore
 ```
 
+[**RETORNE AO INÍCIO**](#índice)
+
 ## SQL Views
 
 Até agora, exploramos consultas ao banco de dados usando comandos como SELECT, GROUP BY e JOINs para visualizar dados temporariamente. No entanto, as tabelas criadas durante essas consultas não são armazenadas permanentemente. Cada vez que executamos um SELECT e, em seguida, outro SELECT, o resultado anterior é perdido.
@@ -3218,6 +3232,8 @@ c) Exclua a View vw_6a.
 ```
 DROP VIEW vw_6a 
 ```
+
+[**RETORNE AO INÍCIO**](#índice)
 
 ## CRUD
 
@@ -3528,6 +3544,8 @@ WHERE ID_Contrato = 11
 SELECT * FROM fContratos
 ```
 
+[**RETORNE AO INÍCIO**](#índice)
+
 ## Subquery e CTE 
 
 A abordagem a seguir é muito resumida.O foco desse capítulo são de fato os exemplos práticos. Mas para um início, consdero ser um bom ponto de partida. 
@@ -3815,6 +3833,8 @@ INNER JOIN CTE_categoriaTelevisionseMonitors
 	ON CTE_produtosAdventureWorks.ProductSubcategoryKey = CTE_categoriaTelevisionseMonitors.ProductSubcategoryKey
 ```
 
+[**RETORNE AO INÍCIO**](#índice)
+
 ## Loops no SQL
 
 ### Para que servem os loops?
@@ -4017,6 +4037,8 @@ END
 
 SELECT * FROM Calendario;
 ```
+
+[**RETORNE AO INÍCIO**](#índice)
 
 ## Window Function
 
@@ -4450,6 +4472,8 @@ FROM
     vwNovosClientes;
 ```
 
+[**RETORNE AO INÍCIO**](#índice)
+
 ## Regex 
 
 ### O que são?
@@ -4777,3 +4801,5 @@ SELECT *
 FROM Nomes
 WHERE Nome LIKE '[Mn][Aa]%'
 ```
+
+[**RETORNE AO INÍCIO**](#índice)
