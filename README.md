@@ -325,7 +325,7 @@ ORDER BY
 	UnitPrice DESC
  ```
 
-[**TOPO**](#indice)
+[**TOPO**](#índice)
 
 ## Funções de Agregação
 
