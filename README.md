@@ -28,7 +28,7 @@
 
 [14. Window Functions](#window-function)
 
-[15. Regex - Regular Expressions](#regex-regular-expressions)
+[15. Regex](#regex)
 
 
 ## Ordenando e Filtrando Dados
@@ -4448,7 +4448,7 @@ FROM
     vwNovosClientes;
 ```
 
-## Regex - Regular Expressions 
+## Regex 
 
 ### O que são?
 
