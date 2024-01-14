@@ -4447,3 +4447,331 @@ SELECT
 FROM
     vwNovosClientes;
 ```
+
+## Regex - Regular Expressions 
+
+### O que são?
+
+Expressões regulares, conhecidas como Regex (abreviação de Regular Expressions), são sequências de caracteres que formam um padrão de busca. Elas são utilizadas em linguagens de programação e ferramentas de processamento de texto para buscar, manipular e validar strings com base em critérios específicos.
+
+### Aplicação 
+
+A expressão regular (conhecida como regex ou regexp, do inglês regular expression) permite uma forma de identificar cadeias de caracteres de interesse, como caracteres específicos, palavras ou padrões de caracteres
+
+Em resumo, a expressão regular é uma forma de permitir realizar, de forma simples, operações bastante complexas com strings, que possivelmente exigiriam várias condições para tratar cada caso.
+
+O SQL server já possui uma opção para tratar casos especiais de textos, por meio do comando LIKE.
+
+### COLLATE
+
+COLLATION é um conjunto de regras que informam ao mecanismo de banco de dados como comparar e classificar os dados no SQL Server.
+
+Em resumo, ele serve para indicar se um determinado campo sera CASE INSENSITIVE e como interpretará a acentuação das palavras.
+
+O COLLATION pode ser definido es níveis diferentes no SQL Server. Abaixo estão os tres niveis:
+
+1. A nivel SQL Server
+2. A nivel de Bancos de Dados
+3. A nivel de tabelas/colunas
+
+
+1. A nivel SQL Server
+
+O COLLATION a princípio é definido durante a instalação do programa.
+
+Por padrão, o COLLATION padrão é o seguinte:
+```
+Latini General CI AS
+```
+Onde CI significa Case Insensitive (não diferencia malúsculas de minúsculas) e AS significa Accent Sensitive (sensível ao sotaque). 
+
+Para descobrir o COLLATION configurado, podemos utilizar o comando abaixo:
+
+```
+SELECT SERVERPROPERTY('collation')
+```
+
+2. A nivel de Banco de Dados
+
+Por padrão, todos os bancos de dados vão herdar a configuração do COLLATION do SQL Server feito durante a instalação. 
+
+Em Propriedades, conseguimos visualizar o COLLATION configurado.
+
+Nos podemos também especificar o COLLATION do Banco de Dailos no momento da sua criação.
+```
+CREATE DATABASE BD_Collation 
+COLLATE Latini_General_CS_AS
+```
+
+Podemos também alterar o COLLATE após criar um hanco de dados, Neste case, uso comando abaixo
+```
+ALTER DATABASE BD_Collation COLLATE Latin1_General_CI_AS
+```
+
+Para saber o COLLATION de um Banco de Dados específico, podemos usar o comando abaixo:
+```
+SELECT DATABASEPROPERTYEX('BD_Collatiion','collation')
+```
+
+3. A nivel de Coluna/labels
+
+Por padrão, uma nova coluna de tipo VARCHAR herda o COLLATION do banco de dados, a menos que você explicitamente ao criar a tabela.
+Para criar uma coluna com um COLLATE diferente, você pode especificar o agrupamento usando o comando Collate SQL.
+```
+CREATE TABLE Nomes(
+ID INT,
+Nome VARCHAR(100) COLLATE Latin1_General_CS_AS)
+```
+Podemos ver o COLLATION de cada coluna da tabela usando o camando abaixo */
+```
+sp_help Nomes
+```
+
+#### COLLATE - EXEMPLO
+
+**CI_AS - Case insensitive**
+```
+CREATE DATABASE BD_collation
+COLLATE Latin1_General_CI_AS
+
+USE BD_collation
+
+CREATE TABLE Tabela(
+ID INT,
+Nome VARCHAR(100) COLLATE Latin1_General_CI_AS -- VEJA QUE NESSE CASO É UM CI, Case insensitive. Logo, a consulta não se importa com maiúsculas ou minúculas 
+)
+
+INSERT INTO Tabela(ID, Nome)
+VALUES
+	(1, 'Matheus'), (2, 'Marcela'), (3,'marcos'), (4,'MAuricio'), (5,'Marta'), (6,'Miranda'), (7,'Melissa'), (8,'Lucas '), (9,'Luisa'), (10,'Pedro')
+
+SELECT * FROM Tabela WHERE Nome = 'marcela' -- Veja que no cadastro Marcela e na pesquisa marcela, mas não houve diferença para a consulta
+
+DROP DATABASE BD_collation
+
+```
+
+**CS_AS - Case Sensitive**
+
+```
+CREATE DATABASE BD_collation
+COLLATE Latin1_General_CS_AS
+
+USE BD_collation
+
+CREATE TABLE Tabela(
+ID INT,
+Nome VARCHAR(100) COLLATE Latin1_General_CS_AS -- VEJA QUE NESSE CASO É UM CS, Case Sensitive. Logo, a consulta se importa com maiúsculas ou minúculas 
+)
+
+INSERT INTO Tabela(ID, Nome)
+VALUES
+	(1, 'Matheus'), (2, 'Marcela'), (3,'marcos'), (4,'MAuricio'), (5,'Marta'), (6,'Miranda'), (7,'Melissa'), (8,'Lucas '), (9,'Luisa'), (10,'Pedro')
+
+SELECT * FROM Tabela WHERE Nome = 'marcela' -- Não encontra nada, a não existe no cadastro 'marcela' e sim 'Marcela'
+```
+
+**Para conseguir fazer a consulta de forma que ele aceite 'marcela'**
+```
+SELECT * 
+FROM Tabela 
+WHERE Nome COLLATE Latin1_General_CI_AS = 'marcela'  -- Aqui a função é neutralizada e se torna insensivel à case, encontrando 'marcela'
+```
+
+### LIKE - Filtrando os primeiros caracteres + Case sensitive 
+```
+USE BD_collation
+CREATE TABLE Textos(
+ID INT, 
+Texto VARCHAR (100) COLLATE Latin1_General_CS_AS
+)
+
+INSERT INTO Textos(ID, Texto)
+VALUES 
+	(1,'Marcos'), (2,'Excel'), (3,'leandro'), (4,'K'), (5,'X7'), (6,'X7'), (7,'#M'), (8,'@9'), (9,'M'), (10,'RT')
+
+SELECT * FROM Textos
+```
+
+**Retornando nomes que começam com a letra 'M', 'E' ou 'K'**
+```	
+SELECT *
+FROM Textos
+WHERE Texto LIKE '[MEK]%' 
+```
+**Retornando nomes que possuam apenas 1 caractere**
+```
+SELECT *
+FROM Textos
+WHERE Texto LIKE '[A-z]'
+```
+**Retornando nomes que possuam apenas 2 caracteres**
+```
+SELECT *
+FROM Textos
+WHERE Texto LIKE '[A-z][A-z]'
+```
+**Retornando nomes que possuam apenas 2 caracteres: o primeiro uma letra e o segundo um número**
+```
+SELECT *
+FROM Textos
+WHERE Texto LIKE '[A-z][0-9]'
+```
+
+### LIKE - Aplicando filtro ainda mais personalizado
+
+```
+CREATE TABLE Nomes(
+ID INT,
+Nome VARCHAR(100) COLLATE Latin1_General_CS_AS
+)
+
+INSERT INTO Nomes(ID, Nome)
+VALUES
+	(1, 'Matheus'), (2, 'Marcela'), (3,'marcos'), (4,'MAuricio'), (5,'Marta'), (6,'Miranda'), (7,'Melissa'), (8,'Lucas '), (9,'Luisa'), (10,'Pedro')
+
+SELECT * FROM Nomes
+```
+
+**Retorna os nomes que:
+-- 1. Começam com a letra 'M' ou 'm'
+-- 2. O segundo caractere pode ser qualquer coisa ('_' é um coringa)
+-- 3. O terceiro caractere pode ser a letra 'R' ou a letra 'r'
+-- 4. Possui uma quantidade qualquer de caracteres depois do terceiro (por conta do '%')**
+
+```
+SELECT * FROM Nomes WHERE Nome LIKE '[Mm]_[Rr]%'
+```
+
+### LIKE: Utilizando o operador de negação ^
+```
+CREATE TABLE Nomes(
+ID INT,
+Nome VARCHAR(100) COLLATE Latin1_General_CS_AS
+)
+
+INSERT INTO Nomes(ID, Nome)
+VALUES
+	(1, 'Matheus'), (2, 'Marcela'), (3,'marcos'), (4,'MAuricio'), (5,'Marta'), (6,'Miranda'), (7,'Melissa'), (8,'Lucas '), (9,'Luisa'), (10,'Pedro')
+
+SELECT * FROM Nomes
+```
+
+**Retorna nomes que não começam com as letra 'L' e 'l'**
+```
+SELECT *
+FROM Nomes
+WHERE Nome LIKE '[^Ll]%'
+```
+
+'**Retorna nomes que começam com qualquer caractere (caractere curinga) e a segunda letra não é um 'E' ou 'e''**
+```
+SELECT *
+FROM Nomes
+WHERE Nome LIKE '_[^Ee]%'
+```
+
+### LIKE - Filtrando caracteres especiais 
+
+```
+USE BD_collation
+CREATE TABLE Textos(
+ID INT, 
+Texto VARCHAR (100) COLLATE Latin1_General_CS_AS
+)
+
+INSERT INTO Textos(ID, Texto)
+VALUES 
+	(1,'Marcos'), (2,'Excel'), (3,'leandro'), (4,'K'), (5,'X7'), (6,'X7'), (7,'#M'), (8,'@9'), (9,'M'), (10,'RT')
+```
+```
+SELECT * FROM Textos
+```
+```
+SELECT 
+	* 
+FROM 
+	Textos
+WHERE Texto LIKE '%[^a-z0-9Ll]%' -- Nesse caso usa-se o ^ tbm, mas da maneira pedindo todos os caracteres que não seja de a-z e nem de 0-9
+```
+
+### LIKE - Aplicação em números
+```
+USE BD_collation
+CREATE TABLE Numeros(
+Numero DECIMAL(20,2))
+
+INSERT INTO Numeros(Numero)
+VALUES 
+	(50),(30.23), (9), (100.54), (15.9), (6.5), (10), (501.76), (1000.56), (31)
+```
+```
+SELECT * FROM Numeros
+```
+
+**Retornando os números que possuem 2 dígitos na parte inteira**
+```
+SELECT 
+	* 
+FROM 
+	Numeros
+WHERE Numero LIKE '[0-9][0-9].[0][0]'
+```
+
+**Retornando linhas que:
+-- 1. Possuem 3 dígitos na parte inteira, sendo o primeiro dígito igual a 5
+-- 2. O primeiro número da parte decimal seja 7
+-- 3. O segundo número da parte decimal seja um número entre 0 e 9.**
+```
+SELECT 
+	* 
+FROM 
+	Numeros
+WHERE Numero LIKE '[5]__.[7][0-9]'
+```
+
+### LIKE -- Case Sensitive 
+```
+USE BD_collation
+```
+```
+CREATE TABLE Nomes(
+ID INT,
+Nome VARCHAR(100) COLLATE Latin1_General_CS_AS
+)
+
+INSERT INTO Nomes(ID, Nome)
+VALUES
+	(1, 'Matheus'), (2, 'Marcela'), (3,'marcos'), (4,'MAuricio'), (5,'Marta'), (6,'Miranda'), (7,'Melissa'), (8,'Lucas '), (9,'Luisa'), (10,'Pedro')
+```
+```
+SELECT * FROM Nomes
+```
+
+**Case Sensitive (Diferenciando maiúsculas de minúculas)**
+
+LIKE padrao como aprendemos até agora:
+```
+SELECT *
+FROM Nomes
+WHERE Nome LIKE 'mar%'
+```
+**Retorna as linhas onde a primeira letra seja 'm', a segunda 'a' e a terceira seja 'r'**
+```
+SELECT *
+FROM Nomes
+WHERE Nome LIKE '[m][a][r]%'
+```
+**Retorna as linhas onde a primeira letra seja [M], a segunda seja 'a' e a terceira seja 'r'**
+```
+SELECT *
+FROM Nomes
+WHERE Nome LIKE '[M][a][r]%'
+```
+
+**Retorna as linhas onde a primeira letra seja 'M' ou 'm', e a segunda seja 'A' e a terceira seja 'a'**
+```
+SELECT *
+FROM Nomes
+WHERE Nome LIKE '[Mn][Aa]%'
+```
