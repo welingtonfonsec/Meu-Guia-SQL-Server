@@ -26,13 +26,10 @@ Espero que gostem desta jornada pelo SQL Server, repleta de aprendizado prático
 
 ### Sobre a base de dados utilizada
 
-A base utilizada nesse guia chama-se Contoso BI Demo Dataset for Retail Industry, um conjunto fictício de dados de demonstração no varejo utilizado para apresentar os produtos de Business Intelligence da Microsoft. Pode ser encontrado [aqui](https://www.microsoft.com/en-us/download/details.aspx?id=18279), baixe o arquivo "ContosoBIdemoBAK.exe". 
+A base utilizada nesse guia chama-se Contoso BI Demo Dataset for Retail Industry, um conjunto fictício de dados de demonstração no varejo utilizado para apresentar os produtos de Business Intelligence da Microsoft. Essa base pode ser encontrada [aqui](https://www.microsoft.com/en-us/download/details.aspx?id=18279), baixe o arquivo "ContosoBIdemoBAK.exe". 
 
 A empresa Contoso Corporation é uma empresa multinacional ( com sede em Paris e com escritórios espalhados ao longo de todo o mundo. A empresa é uma organização de fabricação,
 vendas e suporte, com mais de 100 000 produtos. Por ser uma empresa multinacional, utiliza um SGBD da Microsoft (SQL Server) para centralizar e manipular o grande volume de dados associado ao negócio. Possui mais de 25 mil funcionários espalhados ao longo das dezenas de escritórios no mundo.
-
-
-
 
 
 ## Índice
@@ -76,19 +73,18 @@ O SQL (Structured Query Language) é uma linguagem padrão para gerenciar e mani
 **Bancos de Dados Relacionais:** O SQL é projetado principalmente para bancos de dados relacionais, onde os dados são organizados em tabelas com linhas e colunas inter-relacionadas.
 
 **Operações Básicas:**
-
-**SELECT:** Utilizado para recuperar dados de uma ou mais tabelas.
-**INSERT:** Inserir novos registros em uma tabela.
-**UPDATE:** Atualizar registros existentes em uma tabela.
-**DELETE:** Excluir registros de uma tabela.
+* **SELECT:** Utilizado para recuperar dados de uma ou mais tabelas.
+* **INSERT:** Inserir novos registros em uma tabela.
+* **UPDATE:** Atualizar registros existentes em uma tabela.
+* **DELETE:** Excluir registros de uma tabela.
 
 **Claúsulas:**
 
-**FROM:** Especifica a tabela ou tabelas a serem consultadas.
-**WHERE:** Filtra os resultados com base em condições específicas.
-**ORDER BY:** Ordena os resultados em ordem ascendente ou descendente.
-**GROUP BY:** Agrupa os resultados com base em uma ou mais colunas.
-**HAVING:** Filtra os resultados de grupos com base em condições específicas.
+  * **FROM:** Especifica a tabela ou tabelas a serem consultadas.
+  * **WHERE:** Filtra os resultados com base em condições específicas.
+  * **ORDER BY:** Ordena os resultados em ordem ascendente ou descendente.
+  * **GROUP BY:** Agrupa os resultados com base em uma ou mais colunas.
+  * **HAVING:** Filtra os resultados de grupos com base em condições específicas.
 
 **Tipos de Dados:** Define o tipo de informação que pode ser armazenado em cada coluna de uma tabela, como números inteiros, strings, datas, etc.
 
