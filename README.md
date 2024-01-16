@@ -1,6 +1,6 @@
 ## Índice
 
-[1. Introdução ao SQL](#introdução-ao-SQL)
+[1. Introdução ao SQL](#introdução-ao-sql)
 
 [2. Ordenando e Filtrando Dados](#ordenando-e-filtrando-dados)
 
@@ -30,6 +30,255 @@
 
 [15. Regex](#regex)
 
+## Introdução ao SQL 
+
+O SQL (Structured Query Language) é uma linguagem padrão para gerenciar e manipular bancos de dados relacionais. Criada inicialmente pela IBM na década de 1970, o SQL tornou-se uma ferramenta fundamental para interação com sistemas de gerenciamento de bancos de dados (SGBDs).
+
+### Principais Conceitos do SQL:
+
+**Bancos de Dados Relacionais:** O SQL é projetado principalmente para bancos de dados relacionais, onde os dados são organizados em tabelas com linhas e colunas inter-relacionadas.
+
+**Operações Básicas:**
+
+**SELECT:** Utilizado para recuperar dados de uma ou mais tabelas.
+**INSERT:** Inserir novos registros em uma tabela.
+**UPDATE:** Atualizar registros existentes em uma tabela.
+**DELETE:** Excluir registros de uma tabela.
+
+**Claúsulas:**
+
+**FROM:** Especifica a tabela ou tabelas a serem consultadas.
+**WHERE:** Filtra os resultados com base em condições específicas.
+**ORDER BY:** Ordena os resultados em ordem ascendente ou descendente.
+**GROUP BY:** Agrupa os resultados com base em uma ou mais colunas.
+**HAVING:** Filtra os resultados de grupos com base em condições específicas.
+
+**Tipos de Dados:** Define o tipo de informação que pode ser armazenado em cada coluna de uma tabela, como números inteiros, strings, datas, etc.
+
+**Chaves Primárias e Estrangeiras:** Chaves primárias são usadas para identificar exclusivamente cada registro em uma tabela, enquanto chaves estrangeiras estabelecem relações entre tabelas.
+
+### O comando SELECT
+
+O SELECT é um comando para selecionar dados em uma tabela 
+
+Selecionando uma coluna
+```
+-- Seleciona a coluna FirstName da tabela DimCustomer
+SELECT
+	FirstName
+FROM
+	DimCustomer
+ ```
+
+Selecionando mais de uma coluna
+```
+-- Seleciona a coluna FirstName, LastName, EmailAddres da tabela DimCustomer
+SELECT
+	FirstName,
+ 	LastName,
+  	EmailAddres
+FROM
+	DimCustomer
+ ``` 
+
+### O comando SELECT*
+
+O comando SELECT * permite selecionar TODAS as colunas de uma determinada tabela. Não é muito recomendável para tabelas muito grandes. O objetivo
+deste comando é ter uma rápida visualização de toda a tabela.
+Será melhor usado em conjunto com o comando TOP
+```
+-- Seleciona todas as linhas e colunas da tabela DimCustomer
+SELECT *
+FROM
+	DimCustomer
+```
+
+### O comando SELECT TOP(N)
+
+O comando SELECT TOP(N) permite que a gente selecione apenas as N primeiras linhas de uma tabela4
+
+Selecionar as TOP(N) linhas da tabela
+
+```
+-- Retorna as 10 primeiras linhas da tabela
+SELECT TOP (10)
+	EmailAddres
+ FROM
+ 	DimCustomer
+```
+
+Selecionar as TOP(N)% linhas da tabela
+```
+-- Retorna as 10% primeiras linhas da tabela. Se a tabela tem 100 linhas, retornará as 10 primeira
+SELECT TOP (10) PERCENT
+	EmailAddres
+ FROM
+ 	DimCustomer
+```
+
+## O comando SELECT DISTINCT
+
+O comando SELECT DISTINCT retorna os valores distintos de uma tabela
+
+Retorna todas as linhas distintas da tabela
+
+```
+-- Retorna apenas as linhas distintas da tabela da coluna ColorName
+SELECT DISTINCT
+	ColorName
+ FROM
+ 	DimProduct
+```
+
+## Comentando o código
+
+Comentários são uma boa prática para garantir um bom entendimento de um código. Conforme vamos criando consultas cada vez mais
+complexas, os comentários podem ser muito úteis para ajudar no entendimento do que está sendo feito. Existem duas formas de comentar códigos
+
+Na opção 1 utilizamos o hífen duplo "--" para comentar uma única linha de código
+
+```
+-- ISSO AQUI É UM COMENTÁRIO
+-- Seleciona a coluna FirstName da tabela DimCustomer
+SELECT
+	FirstName
+FROM
+	DimCustomer
+ ```
+
+Já na opção 2 utilizamos uma barra seguida de um asterisco para identificar onde começa um comentário, e utilizamos o asterisco seguido de uma barra  para
+identificar onde termina um comentário. 
+
+```
+/* Retorna apenas as linhas distintas da tabela da coluna ColorName
+SELECT DISTINCT
+	ColorName
+ FROM
+ 	DimProduct /*
+```
+
+### AS: Renomeando (aliasing) colunas
+
+Uma coluna de uma tabela pode ser renomeada por meio do comando AS. Acomapanhando o comando é recomendado o uso de aspas simples.
+```
+-- Seleciona a coluna FirstName, LastName, EmailAddres da tabela DimCustomer
+SELECT
+	FirstName 'Primeiro Nome',
+ 	LastName 'Último Nome',
+  	EmailAddres 'Endereço de E-mail'
+FROM
+	DimCustomer
+ ``` 
+
+### Exemplos Práticos
+
+1 - Você é responsável por controlar os dados de clientes e de produtos da sua empresa. O que você precisará fazer é confirmar se:
+
+a) Existem 2.517 produtos cadastrados na base e, se não tiver, você deverá reportar ao seu gestor para saber se existe alguma defasagem
+no controle dos produtos.
+
+```
+SELECT * FROM DimProduct
+
+Resultado
+2.517
+```
+
+b) Até o mês passado, a empresa tinha um total de 19.500 clientes na base de controle. Verifique se esse número aumentou ou reduziu.
+
+```
+SELECT * FROM DimCustomer
+Resultado
+18.869
+```
+
+2 - Você trabalha no setor de marketing da empresa Contoso e acaba de ter uma ideia de oferecer descontos especiais para os clientes no dia de seus
+aniversários. Para isso, você vai precisar listar todos os clientes e as suas respectivas datas de nascimento, além de um contato.
+
+  * a) Selecione as colunas: CustomerKey, FirstName, EmailAddress, BirthDate da tabela dimCustomer.
+  * b) Renomeie as colunas dessa tabela usando o alias (comando AS).
+  
+```
+SELECT 
+	CustomerKey AS 'ID Cliente',
+ 	FirstName AS 'Primeiro Nome',
+  	EmailAddress AS 'E-mail',
+   	BirthDate AS 'Data de Nasc'
+FROM
+	DimCustomer
+```
+
+3 - A Contoso está comemorando aniversário de inauguração de 10 anos e pretende fazer uma ação de premiação para os clientes. A empresa quer presentear os
+primeiros clientes desde a inauguração. Você foi alocado para levar adiante essa ação. Para isso, você terá que fazer o seguinte:
+
+a) A Contoso decidiu presentear os primeiros 100 clientes da história com um vale compras de R$ 10.000. Utilize um comando em SQL para retornar uma
+tabela com os primeiros 100 primeiros clientes da tabela dimCustomer (selecione todas as colunas).
+
+```
+SELECT  TOP (100)
+	*
+FROM
+	DimCustomer
+```
+
+b) A Contoso decidiu presentear os primeiros 20% de clientes da história com um vale compras de R$ 2.000. Utilize um comando em SQL para retornar 20% das
+linhas da sua tabela dimCustomer (selecione todas as colunas).
+
+```
+SELECT  TOP (20) PERCENT
+	*
+FROM
+	DimCustomer
+```
+
+c) Adapte o código do item a) para retornar apenas as 100 primeiras linhas, mas apenas as colunas FirstName, EmailAddress, BirthDate.
+
+```
+SELECT  TOP (100)
+	FirstName,
+	EmailAddress,
+	BirthDate
+FROM
+	DimCustomer
+```
+
+d) Renomeie as colunas anteriores para nomes em português
+
+```
+SELECT  TOP (100)
+	FirstName AS 'Primeiro Nome',
+	EmailAddress AS 'E-mail',
+	BirthDate AS 'Data de Nasc'
+FROM
+	DimCustomer
+```
+
+4 - A empresa Contoso precisa fazer contato com os fornecedores de produtos para repor o estoque. Você é da área de compras e precisa descobrir quem são esses fornecedores.
+Utilize um comando em SQL para retornar apenas os nomes dos fornecedores na tabela dimProduct e renomeie essa nova coluna da tabela.
+
+```
+SELECT
+	DISTINCT Manufacturer AS 'Produtor'
+FROM
+	DimProduct
+```
+
+5 - O seu trabalho de investigação não para. Você precisa descobrir se existe algum produto registrado na base de produtos que ainda não tenha sido
+vendido. Tente chegar nessa informação.
+
+```
+SELECT DISTINCT ProductKey FROM FactSales
+Resultado
+2.516
+```
+
+```
+SELECT DISTINCT ProductKey FROM DimProduct
+Resultado
+2.517
+```
+
+[**RETORNE AO INÍCIO**](#índice)
 
 ## Ordenando e Filtrando Dados
 
