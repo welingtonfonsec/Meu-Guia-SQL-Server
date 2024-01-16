@@ -1,3 +1,40 @@
+## Apresentação
+
+Bem-vindos ao meu "Guia Prático de SQL Server", uma compilação abrangente dos conhecimentos adquiridos em diversos cursos online sobre SQL Server. Este guia foi cuidadosamente elaborado para oferecer uma visão sólida e prática dos fundamentos do SQL Server, proporcionando uma base sólida para iniciantes e insights valiosos para aqueles que buscam aprimorar suas habilidades. Aqui vamos do básico ao avançado.
+
+**O que Você Pode Esperar:**
+
+Cada capítulo deste guia aborda um aspecto específico do SQL Server, desde os conceitos básicos até tópicos mais avançados. O destaque está nos "Exemplos Práticos" apresentados no final de cada capítulo, fornecendo aplicações reais que solidificam o entendimento teórico. São exercícios praticos. As querys das resoluções estão disponíveis no repositório.
+
+**Pontos de Destaque:**
+
+Abordagem Simples e Conceitual: Cada tópico é explorado de maneira simples e conceitual, facilitando a compreensão mesmo para aqueles que estão iniciando no mundo do SQL Server.
+
+Diversidade de Assuntos: Desde consultas simples até operações avançadas de administração e modelagem de bancos de dados, abordamos uma variedade de tópicos relevantes para um entendimento abrangente do SQL Server.
+
+Foco nos Exemplos Práticos: Os "Exemplos Práticos" no final de cada capítulo são a espinha dorsal deste guia. Eles oferecem situações do mundo real que ajudam a aplicar e consolidar o conhecimento adquirido.
+
+**Uso Diário e Interesse Pessoal:**
+
+Este guia não é apenas um recurso educacional, mas também um companheiro diário. Serve como um guia rápido e confiável para consultas rápidas, revisões conceituais ou como fonte de inspiração para resolver desafios específicos.
+
+**Feedback:**
+
+Ao compartilhar este guia, espero que ele seja útil e esclarecedor. Aceito sugestões para aprimoramentos contínuos, visando torná-lo uma referência útil para todos que desejam aprofundar seus conhecimentos em SQL Server.
+
+Espero que gostem desta jornada pelo SQL Server, repleta de aprendizado prático e conceitual. Bons estudos! 🚀
+
+### Sobre a base de dados utilizada
+
+A base utilizada nesse guia chama-se Contoso BI Demo Dataset for Retail Industry, um conjunto fictício de dados de demonstração no varejo utilizado para apresentar os produtos de Business Intelligence da Microsoft. Pode ser encontrado [aqui](https://www.microsoft.com/en-us/download/details.aspx?id=18279), baixe o arquivo "ContosoBIdemoBAK.exe". 
+
+A empresa Contoso Corporation é uma empresa multinacional ( com sede em Paris e com escritórios espalhados ao longo de todo o mundo. A empresa é uma organização de fabricação,
+vendas e suporte, com mais de 100 000 produtos. Por ser uma empresa multinacional, utiliza um SGBD da Microsoft (SQL Server) para centralizar e manipular o grande volume de dados associado ao negócio. Possui mais de 25 mil funcionários espalhados ao longo das dezenas de escritórios no mundo.
+
+
+
+
+
 ## Índice
 
 [1. Introdução ao SQL](#introdução-ao-sql)
